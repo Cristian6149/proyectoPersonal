@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Animated Login From</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <link rel="stylesheet" href="login.css" />
+  </head>
+  <body>
+    <div id="app">
+    <div class="login_form_container">
+      <div class="login_form">
+        <h2>{{title}}</h2>
+        <div class="input_group">
+          <i class="fa fa-user"></i>
+          <input
+            type="text"
+            placeholder="Username"
+            class="input_text"
+            autocomplete="off" 
+            v-model="email"
+          />
+        </div>
+        <div class="input_group">
+          <i class="fa fa-unlock-alt"></i>
+          <input
+            type="password"
+            placeholder="Password"
+            class="input_text"
+            autocomplete="off"
+            v-model="password"
+          />
+        </div>
+        <div class="button_group" id="login_button">
+          <a @click="login()">Submit</a>
+        </div>
+      </div>
+    </div>
+</div>
+    <script src="login.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js" integrity="sha512-uMtXmF28A2Ab/JJO2t/vYhlaa/3ahUOgj1Zf27M5rOo8/+fcTUVH0/E0ll68njmjrLqOBjXM3V9NiPFL5ywWPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script>
+    const app = new Vue({
+        el:"#app",
+        data:{
+            title:'LOGIN',
+            email:'',
+            password:''
+        },
+        methods:{
+            login(){
+                axios.post("http://localhost:8000/api/login",{
+                    email:this.email,
+                    password:this.password
+                }).then((res)=>{ 
+                /*res.success ? */window.location.href='./sidebar/sidebar.html' /*: window.location.href='index.html';*/
+                      })
+            }
+            }
+        }
+    )
+</script>
+  </body>
+</html>

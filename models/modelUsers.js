@@ -1,0 +1,107 @@
+const mongoose=require('mongoose')
+
+const usuarios=new mongoose.Schema({
+    name: {
+        type:String,
+        required:true,
+        minLength:[4,'Name should be minimum of 4 characters']
+    },
+    email:{
+        type:String,
+        required:true,
+        unique:true,
+    },
+    password:{
+        type:String,
+        required:true,
+        minLength:[8,'Password should be minimum of 8 characters']
+    },
+    rol:{
+        type:String,
+        require:true,
+        minLength:[4,'Rol should be minimum of 4 characters']
+    }
+})
+
+const producto = new mongoose.Schema({
+    name:{
+        type:String,
+        require:true,
+        minLength:[2,'nombre muy corto']
+    },
+    precioBase:{
+        type:Number,
+        require:true,
+    },
+    precioVenta:{
+        type:Number,
+        require:true,
+    },
+    stock:{
+        type:Number,
+        require:true
+    }
+})
+ 
+const cliente  = new mongoose.Schema({
+    nombre:{
+        type:String,
+        require:true,
+        minLength:[2,'nombre muy corto']
+    },
+    apellido:{
+        type:String
+    },
+    dni:{
+        type:Number,
+        require:true,
+        minLength:[8,'dni muy corto']
+    }
+})
+
+const detalle = new mongoose.Schema({
+    idCliente:{
+        type:String,
+        require:true
+    },
+    idVenta:{
+       type:String,
+       require:true
+    },
+    idProducto:{
+        type:String,
+        require:true
+    },
+    subtotal:{
+        type:Number,
+        require:true,
+        min:0
+    },
+    subtotalGanancia:{
+        type:Number,
+        require:true,
+        min:0
+    }
+
+})
+
+const venta = new mongoose.Schema({
+    fecha:{
+      type:Date,
+      default: new Date()
+    },
+    total:{
+        type:Number,
+        min:0
+    }
+})
+ 
+const modelUsuarios = mongoose.model('users2.0NeverStore',usuarios);
+const modelDetalle = mongoose.model('detalle2.0NeverStore',detalle);
+const modelVenta = mongoose.model('venta2.0NeverStore',venta);
+const modelCliente = mongoose.model('cliente2.0NeverStore',cliente);
+const modelProducto = mongoose.model('producto2.0NeverStore',producto);
+
+module.exports = {
+    modelUsuarios,modelDetalle,modelVenta,modelCliente,modelProducto
+};
