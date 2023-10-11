@@ -38,7 +38,7 @@
           />
         </div>
         <div class="button_group" id="login_button">
-          <a @click="login()">Submit</a>
+          <h4 @click="login()">Submit</h4>
         </div>
       </div>
     </div>
@@ -60,7 +60,8 @@
                     email:this.email,
                     password:this.password
                 }).then((res)=>{ 
-                /*res.success ? */window.location.href='./sidebar/sidebar.html' /*: window.location.href='index.html';*/
+                  const result = res.data;                  
+                  result.success ? window.location.href='./sidebar/sidebar.html' : window.location.href='index.html';
                       })
             }
             }

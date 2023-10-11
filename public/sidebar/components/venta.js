@@ -5,7 +5,10 @@ Vue.component("ventas",{
             productos:[],
             productoVenta:[],
             cantidad_pedido:0,
-            TOTAL:0
+            TOTAL:0,
+            nombreCliente:'',
+            apellidoCliente:'',
+            dniCliente:''
         }
     },
     mounted(){
@@ -28,7 +31,33 @@ Vue.component("ventas",{
         },
         restar(precio){
           this.TOTAL-=precio;
+        },
+        registroVenta(){
+          const self = this;
+          axios.post('http://localhost:8000/api/venta/cliente',{
+            nombre:self.nombreCliente,
+            apellido:self.apellidoCliente,
+            dni:self.dniCliente,
+            total:self.TOTAL
+          }).then(res=>{
+            const id=res.data.data1._id
+            self.nuevoDetalle(id);
+          }).catch(e=>{
+            console.log("error")
+          })
+        },
+        nuevoDetalle(idVenta){
+          const self = this;
+           for(let data of self.productoVenta){
+            axios.post('http://localhost:8000/api/venta/detalle',{
+              idVenta:idVenta,
+              idProducto:data._id,
+              subtotal:data.subtotal,
+              subtotalGanancia:data.subtotalGanancia
+            })
+           }
         }
+        
     },
     template://html
     `
@@ -49,8 +78,8 @@ Vue.component("ventas",{
     </table>
     </div><!--fin div tabla 1-->
     <div><!--inicio div tabla 2-->
-      <table>
-        <caption><h1>REGISTRO COMPRA</h1></caption>
+    <h1>REGISTRO COMPRA</h1>
+      <table>        
           <tr>
             <th>DESCRIPCION</th>
             <th>PRECIO PRODUCTO</th>
@@ -65,59 +94,53 @@ Vue.component("ventas",{
             <td>{{data.cantidad}}</td>
             <td><button @click="sumar(data.precioVenta),data.cantidad++">+</button></td>
           </tr>
-          <h1>TOTAL :S/.{{TOTAL}}</h2>
+          <h2>TOTAL :S/.{{TOTAL}}</h2>
       </table>
     </div><!--fin div tabla 2-->
 
     <div>
-      <!-- Button trigger modal -->
-        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
-        Hacer pedido
-        </button>
+       <div><!--inicio modal-->
+       <button onclick="openModal()">hacer pedido</button>
 
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+       <!-- Ventana Modal -->
+         <div id="myModal" class="modal">
           <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Registro de compras</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-                 <div><!--inicio div tabla 2-->
-                 <table>
-                     <tr>
-                       <th>DESCRIPCION</th>
-                       <th>P/U</th>
-                       <th>CANT</th>
-                       <th>SUBTOTAL</th>
-                     </tr>
-                     <tr v-for="data in productoVenta">
+           <span class="close" onclick="closeModal()">&times;</span>
+           <h2>PEDIDOS:</h2>
+           <div><!--inicio div tabla 2-->
+               <table>
+                  <tr>
+                    <th>DESCRIPCION</th>
+                     <th>CANT</th>
+                      <th>SUBTOTAL</th>
+                      </tr>
+                       <tr v-for="data in productoVenta">
                        <td>{{data.name}}</td>
                        <td>{{data.precioVenta}}</td>
                        <td>{{data.cantidad}}</td>
                        <td>{{data.subtotal}}</td>
                      </tr>
-                     <h1>TOTAL :S/.{{TOTAL}}</h2>
-                 </table>
-               </div><!--fin div tabla 2-->
-               <button>continuar</button>
-               <h3>Ingrese datos:</h3>
-               <input type="text" placeholder="nombre cliente"/>
-               <input type="text" placeholder="opcional: apellido cliente"/>
-               <input type="number" placeholder="dni cliente"/>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary" @click="">Save changes</button>
-            </div>
-          </div>
-        </div>
-        </div>
-            </div>
+                     <h2>TOTAL :S/.{{TOTAL}}</h2>
+                  </table>
+                </div><!--fin div tabla 2-->
+              
+              <div><!--data usuario-->
+              <h3>Ingrese datos:</h3>
+              <input type="text" placeholder="nombre cliente" v-model='nombreCliente'/>
+              <input type="text" placeholder="opcional: apellido cliente" v-model='apellidoCliente'/>
+              <input type="number" placeholder="dni cliente" v-model='dniCliente'/>
+           </div><!--data usuario-->
+              <div class="btn-group  closee " role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-success" onclick="closeModal()"  @click="registroVenta()">registrar</button>
+                <button type="button" class="btn btn-danger"  onclick="closeModal()">cancelar</button>
+              </div>
+          </div>          
 
-      </div>
+             <!--xfinal modal-->
+       </div><!--fin modal-->
+
+    </div>
+    </div>
+    </div>
     `
 })

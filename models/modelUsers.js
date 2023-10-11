@@ -42,28 +42,8 @@ const producto = new mongoose.Schema({
         require:true
     }
 })
- 
-const cliente  = new mongoose.Schema({
-    nombre:{
-        type:String,
-        require:true,
-        minLength:[2,'nombre muy corto']
-    },
-    apellido:{
-        type:String
-    },
-    dni:{
-        type:Number,
-        require:true,
-        minLength:[8,'dni muy corto']
-    }
-})
 
 const detalle = new mongoose.Schema({
-    idCliente:{
-        type:String,
-        require:true
-    },
     idVenta:{
        type:String,
        require:true
@@ -86,6 +66,19 @@ const detalle = new mongoose.Schema({
 })
 
 const venta = new mongoose.Schema({
+    nombre:{
+        type:String,
+        require:true,
+        minLength:[2,'nombre muy corto']
+    },
+    apellido:{
+        type:String
+    },
+    dni:{
+        type:Number,
+        require:true,
+        minLength:[8,'dni muy corto']
+    },
     fecha:{
       type:Date,
       default: new Date()
@@ -99,9 +92,8 @@ const venta = new mongoose.Schema({
 const modelUsuarios = mongoose.model('users2.0NeverStore',usuarios);
 const modelDetalle = mongoose.model('detalle2.0NeverStore',detalle);
 const modelVenta = mongoose.model('venta2.0NeverStore',venta);
-const modelCliente = mongoose.model('cliente2.0NeverStore',cliente);
 const modelProducto = mongoose.model('producto2.0NeverStore',producto);
 
 module.exports = {
-    modelUsuarios,modelDetalle,modelVenta,modelCliente,modelProducto
+    modelUsuarios,modelDetalle,modelVenta,modelProducto
 };

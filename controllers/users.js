@@ -3,7 +3,7 @@ const dotenv = require('dotenv')
 const jwt = require('jsonwebtoken')
 const isAuthenticated = require('../middleware/auth');
 dotenv.config({path:'../config/config.env'})
-const { modelUsuarios,modelProducto } = require('../models/modelUsers.js')
+const { modelUsuarios,modelProducto,modelVenta,modelDetalle } = require('../models/modelUsers.js')
 
 setters = app =>{
     app.post('/register', async(req,res)=>{
@@ -47,6 +47,29 @@ setters = app =>{
             return res.json({"message": e});
         }
     })
+
+    app.post('/venta/cliente', async(req,res)=>{
+          try{
+               const newVenta = new modelVenta(req.body);
+               await newVenta.save()
+               console.log(newVenta);
+               res.json({"data1":newVenta})
+          }catch(e){
+            console.log(e)
+                res.json({errorrrrr:e})
+          }
+    })
+      app.post('/venta/detalle',async(req,res)=>{
+        try{
+            const newDetalle = new modelDetalle(req.body)
+            await newDetalle.save()
+
+            return res.json({data:newDetalle})
+        }catch(e){
+            res.send(e);
+        }
+      })
+
 }
 
 const getters = app =>{
@@ -87,6 +110,26 @@ const getters = app =>{
             return res.json({ productos: productos })
         } catch (error) {
             return res.json({ error: error });
+        }
+    })
+
+    //GET
+    app.get('/detalle/:id',async (req,res)=>{
+        try{
+            const getDetalle = await modelDetalle.find({"idVenta":req.params.id})
+            res.status(200).json(getDetalle)
+        }catch(e){
+            res.status(500).json(e);
+        }
+    })
+
+    //GET ALL
+    app.get('/venta',async (req,res)=>{
+        try{
+            const getVenta = await modelVenta.find()
+            res.status(200).json(getVenta)
+        }catch(e){
+            res.status(500).json(e);
         }
     })
    }
