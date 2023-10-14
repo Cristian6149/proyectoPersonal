@@ -3,7 +3,9 @@ Vue.component("vista_ventas",{
         return {
             titulo1:"REGISTRO DE VENTAS",
             ventas:[],
-            detalleSeleccionado:[]
+            detalleSeleccionado:[],
+            VENTAS_TOTALES:0,
+            GANANCIA_TOTAL:0
         }
     },
     mounted(){
@@ -14,6 +16,8 @@ Vue.component("vista_ventas",{
         async getventas(){
             const result = await axios.get('http://localhost:8000/api/venta');
             this.ventas=result.data.map(res=>{
+                this.VENTAS_TOTALES+=res.total;
+                this.GANANCIA_TOTAL+=res.totalganancia;
                 return res;
             })
             console.log(this.ventas)
@@ -29,29 +33,43 @@ Vue.component("vista_ventas",{
     template://html
     `
     <div>
-     <table border="4">
+     <table border="2">
      <tr >
-         <th>FECHA DE VENTA</th>
-         <th colspan="2">TOTAL</th>
+         <th>CLIENTE</th>
+         <th>FECHA COMPRA</th>
+         <th>TOTAL</th>
+         <th>G.VENTA</th>
       </tr>
       <tr v-for="data in ventas">
+         <td>{{data.nombre}}</td>
          <td>{{data.fecha}}</td>
          <td>{{data.total}}</td>
-         <td>{{data._id}}</td>
-         <button onclick="openModal()" @click="getDetalles(data._id)">ver detalle</button>
+         <td>{{data.totalganancia}}</td>
+         <button onclick="openModal2()" @click="getDetalles(data._id)">ver detalle</button>
       </tr>
      </table>
+     <h1>VENTAS TOTALES : {{VENTAS_TOTALES}}</h1>
+     <h1>GANANCIA DEL DIA : {{GANANCIA_TOTAL}}</h1>
      <button @click="getventas()">actualizar</button>
     <!--xinicio modal-->
      
    <!-- Ventana Modal -->
-<div id="myModal" class="modal">
-<div class="modal-content">
-  <span class="close" onclick="closeModal()">&times;</span>
+<div id="myModal2" class="modal2">
+<div class="modal-content2">
+  <span class="close2" onclick="closeModal2()">&times;</span>
   <h2>DETALLES:</h2>
-  <table>
+  <table border="2">
+  <tr>
+     <th>ID DE PRODUCTO</th>
+     <th>CANTIDAD</th>
+     <th>SUBTOTAL</th>
+     <th>GANANCIA</th> 
+  </tr> 
   <tr v-for="data in detalleSeleccionado">
-      <td>{{data.idCliente}}</td>
+      <td>{{data.idProducto}}</td>
+      <td>{{data.cantidad}}</td>
+      <td>{{data.subtotal}}</td>
+      <td>{{data.subtotalGanancia}}</td>
   </tr>
 </table>
 </div>

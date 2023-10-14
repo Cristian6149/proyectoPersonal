@@ -47,6 +47,7 @@ setters = app =>{
             return res.json({"message": e});
         }
     })
+    
 
     app.post('/venta/cliente', async(req,res)=>{
           try{
@@ -108,6 +109,15 @@ const getters = app =>{
                 return res.json({ message: 'No product found' })
             }
             return res.json({ productos: productos })
+        } catch (error) {
+            return res.json({ error: error });
+        }
+    })
+
+    app.post('/productos/:id', async (req, res) => {
+        try {
+            const updateProductos = await modelProducto.findByIdAndUpdate(req.params.id,{$set:req.body});
+            return res.status(200).json(updateProductos)
         } catch (error) {
             return res.json({ error: error });
         }

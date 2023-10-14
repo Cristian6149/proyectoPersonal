@@ -61,6 +61,11 @@ const detalle = new mongoose.Schema({
         type:Number,
         require:true,
         min:0
+    },
+    cantidad:{
+        type:Number,
+        require:true,
+        min:0
     }
 
 })
@@ -84,6 +89,10 @@ const venta = new mongoose.Schema({
       default: new Date()
     },
     total:{
+        type:Number,
+        min:0
+    },
+    totalganancia:{
         type:Number,
         min:0
     }

@@ -6,6 +6,7 @@ Vue.component("ventas",{
             productoVenta:[],
             cantidad_pedido:0,
             TOTAL:0,
+            TOTAL_GANANCIA:0,
             nombreCliente:'',
             apellidoCliente:'',
             dniCliente:''
@@ -26,8 +27,10 @@ Vue.component("ventas",{
              this.productoVenta.push({...produc,cantidad:0,subtotal:0});
 
         },
-        sumar(precio){
-          this.TOTAL+=precio;
+        sumar(precioVenta,precioBase){
+          const ganancia= precioVenta-precioBase;
+          this.TOTAL+=precioVenta;
+          this.TOTAL_GANANCIA+=ganancia;
         },
         restar(precio){
           this.TOTAL-=precio;
@@ -38,7 +41,8 @@ Vue.component("ventas",{
             nombre:self.nombreCliente,
             apellido:self.apellidoCliente,
             dni:self.dniCliente,
-            total:self.TOTAL
+            total:self.TOTAL,
+            totalganancia:self.TOTAL_GANANCIA
           }).then(res=>{
             const id=res.data.data1._id
             self.nuevoDetalle(id);
@@ -53,8 +57,12 @@ Vue.component("ventas",{
               idVenta:idVenta,
               idProducto:data._id,
               subtotal:data.subtotal,
-              subtotalGanancia:data.subtotalGanancia
+              subtotalGanancia:(data.precioVenta-data.precioBase)*data.cantidad,
+              cantidad:data.cantidad
             })
+            axios.post(`http://localhost:8000/api/productos/${data._id}`,{
+              stock:data.stock-data.cantidad
+            });
            }
         }
         
@@ -68,7 +76,7 @@ Vue.component("ventas",{
       <tr>
        <th>PRODUCTO</th>
        <th>PRECIO</th>
-       <th>CANTIDAD</th>
+       <th></th>
       </tr>
       <tr v-for="produc in productos">
         <td>{{produc.name}}</td>
@@ -90,9 +98,13 @@ Vue.component("ventas",{
             <td>{{data.name}}</td>
             <td>{{data.precioVenta}}</td>
             <td>{{data.subtotal=data.precioVenta*data.cantidad}}</td>
-            <td><button @click="restar(data.precioVenta),data.cantidad--">-</button></td>
+            <td><button @click="restar(data.precioVenta,data.
+              precioBase
+              ),data.cantidad--">-</button></td>
             <td>{{data.cantidad}}</td>
-            <td><button @click="sumar(data.precioVenta),data.cantidad++">+</button></td>
+            <td><button @click="sumar(data.precioVenta,data.
+              precioBase
+              ),data.cantidad++">+</button></td>
           </tr>
           <h2>TOTAL :S/.{{TOTAL}}</h2>
       </table>
