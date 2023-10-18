@@ -12,7 +12,9 @@ Vue.component("almacen",{
            nombreNuevoProducto:"",
            precioBaseNuevoProducto:"",
            precioVentaNuevoProducto:"",
-           stockNuevoProducto:""
+           stockNuevoProducto:"",
+           sumaTotalStock:0,
+           
         }
     },
     mounted(){
@@ -25,10 +27,13 @@ Vue.component("almacen",{
     },
     methods:{
         async getProductos(){
+          this.sumaTotalStock=0;
             const result = await axios.get(`http://localhost:8000/api/productos`);
             this.listaProductos=result.data.productos.map(res=>{
+              this.sumaTotalStock+=(res.stock*res.precioBase);
                 return res;
             })
+            store('TOTAL_INVENTARIO', this.sumaTotalStock)
         },
         async agregarProducto(){
            await axios.post('http://localhost:8000/api/agregarProducto',{
@@ -65,6 +70,7 @@ Vue.component("almacen",{
               <td>{{data.stock}}</td>
               <button @click="seleccionarProducto(data.name,data._id,data.stock),ventanamodal='stock'" onclick="openModal3()" >agregar stock</button>
            </tr>
+           <h4>TOTAL:  S/ {{sumaTotalStock}}</h4>
          </table>
          <button @click="ventanamodal='agregarProducto'" onclick="openModal3()">agregar productos</button>
          
@@ -77,8 +83,8 @@ Vue.component("almacen",{
                        <h1>{{productoSeleccionadoName}}</h1>
                        <h3>stock actual -> {{productoSeleccionadoStock}}</h3>
                        <input type="number" v-model="nuevoStock" placeholder="ingrese cant agregar" >
-                       <button onclick="closeModal3()" >cancelar</button>
-                       <button @click="incrementarstock()" onclick="closeModal3()" >agregar</button>
+                       <button @click="nuevoStock=0" onclick="closeModal3()" >cancelar</button>
+                       <button @click="incrementarstock(),getProductos(),nuevoStock=0" onclick="closeModal3()" >agregar</button>
                     </div>  <!--fin div agregar stock--> 
                     <div v-show="ventanamodal=='agregarProducto'">
                        <h1>AGREGANDO PRODUCTOS....</h1>
@@ -87,7 +93,7 @@ Vue.component("almacen",{
                        <input type="text" placeholder="ingrese precio venta" v-model="precioVentaNuevoProducto"/>
                        <input type="text" placeholder="ingrese stock" v-model="stockNuevoProducto"/>
                        <button onclick="closeModal3()">cancelar</button>
-                       <button @click="agregarProducto()" onclick="closeModal3()">agregar</button>
+                       <button @click="agregarProducto(),getProductos()" onclick="closeModal3()">agregar</button>
                     </div><!--fin div agregar producto--> 
                   </div>
                </div>

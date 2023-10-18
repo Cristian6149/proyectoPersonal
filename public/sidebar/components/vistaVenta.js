@@ -15,12 +15,16 @@ Vue.component("vista_ventas",{
     methods:{
         async getventas(){
             const result = await axios.get('http://localhost:8000/api/venta');
-            this.ventas=result.data.map(res=>{
+                this.VENTAS_TOTALES=0;
+                this.GANANCIA_TOTAL=0;
+
+             this.ventas=result.data.map(res=>{
                 this.VENTAS_TOTALES+=res.total;
-                this.GANANCIA_TOTAL+=res.totalganancia;
+                this.GANANCIA_TOTAL+=res.totalganancia;                
                 return res;
             })
-            console.log(this.ventas)
+            store('GANANCIA_TOTAL', this.GANANCIA_TOTAL)
+            store('VENTA_TOTAL', this.VENTAS_TOTALES)
         },
         async getDetalles(id){
             const self = this;

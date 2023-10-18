@@ -23,7 +23,6 @@ Vue.component("ventas",{
             })
         },
         seleccionarProducto(produc){
-            console.log(produc)
              this.productoVenta.push({...produc,cantidad:0,subtotal:0});
 
         },
@@ -33,7 +32,9 @@ Vue.component("ventas",{
           this.TOTAL_GANANCIA+=ganancia;
         },
         restar(precio){
+          const ganancia= precioVenta-precioBase;
           this.TOTAL-=precio;
+          this.TOTAL_GANANCIA-=ganancia;
         },
         registroVenta(){
           const self = this;
@@ -64,6 +65,11 @@ Vue.component("ventas",{
               stock:data.stock-data.cantidad
             });
            }
+        },
+        eliminarRegistro(id,precio,cantidad){
+            this.TOTAL-=(precio*cantidad)
+          const nuevoArray = this.productoVenta.filter(objeto => objeto._id !== id);
+          this.productoVenta=nuevoArray
         }
         
     },
@@ -71,19 +77,21 @@ Vue.component("ventas",{
     `
     <div>
     <h1>{{titulo1}}</h1>
-    <div><!--inicio div tabla1-->
-    <table>
-      <tr>
-       <th>PRODUCTO</th>
-       <th>PRECIO</th>
-       <th></th>
-      </tr>
-      <tr v-for="produc in productos">
-        <td>{{produc.name}}</td>
-        <td>{{produc.precioVenta}}</td>
-        <td><button @click="seleccionarProducto(produc)">agregar</button></td>
-      </tr>
-    </table>
+     <div><!--inicio div tabla1-->
+      <table>
+        <tr>
+          <th>PRODUCTO</th>
+          <th>PRECIO</th>          
+          <th>STOCK</th>
+          <th></th>
+        </tr>
+        <tr v-for="produc in productos">
+          <td>{{produc.name}}</td>
+          <td>{{produc.precioVenta}}</td>
+          <td>{{produc.stock}}</td>
+          <td><button @click="seleccionarProducto(produc)">agregar</button></td>
+        </tr>
+     </table>
     </div><!--fin div tabla 1-->
     <div><!--inicio div tabla 2-->
     <h1>REGISTRO COMPRA</h1>
@@ -93,18 +101,16 @@ Vue.component("ventas",{
             <th>PRECIO PRODUCTO</th>
             <th>SUBTOTAL</th>
             <th colspan="3">CANTIDAD</th>
+            <th></th>
           </tr>
           <tr v-for="data in productoVenta">
             <td>{{data.name}}</td>
             <td>{{data.precioVenta}}</td>
             <td>{{data.subtotal=data.precioVenta*data.cantidad}}</td>
-            <td><button @click="restar(data.precioVenta,data.
-              precioBase
-              ),data.cantidad--">-</button></td>
+            <td><button @click="restar(data.precioVenta,data.precioBase),data.cantidad--">-</button></td>
             <td>{{data.cantidad}}</td>
-            <td><button @click="sumar(data.precioVenta,data.
-              precioBase
-              ),data.cantidad++">+</button></td>
+            <td><button @click="sumar(data.precioVenta,data.precioBase),data.cantidad++">+</button></td>
+            <td><ion-icon name="trash-outline" class="btn btn-danger" @click="eliminarRegistro(data._id,data.precioVenta,data.cantidad)"></ion-icon></td>
           </tr>
           <h2>TOTAL :S/.{{TOTAL}}</h2>
       </table>
@@ -112,7 +118,7 @@ Vue.component("ventas",{
 
     <div>
        <div><!--inicio modal-->
-       <button onclick="openModal()">hacer pedido</button>
+       <button onclick="openModal()" >hacer pedido</button>
 
        <!-- Ventana Modal -->
          <div id="myModal" class="modal">

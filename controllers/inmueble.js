@@ -1,6 +1,16 @@
 const {modelPropiedad,modelequipo} = require('../models/modelInmueble.js')
 
 const setterInmuebles = app=>{
+    app.post('/propiedades/:id',async(req,res)=>{
+        try{
+            const modify =await modelPropiedad.findByIdAndUpdate(req.params.id,{$set:req.body})
+            return res.send(modify)
+        }catch(e){
+            return res.send(e)
+        }
+        
+    })
+
     app.post('/propiedades',async (req,res)=>{
         try{
             const newProdpiedaes = new modelPropiedad(req.body)
@@ -13,6 +23,7 @@ const setterInmuebles = app=>{
         }
     })
 
+    
     app.post('/equipo',async (req,res)=>{
         try{
             const newEquipo = new modelequipo(req.body)
@@ -24,6 +35,35 @@ const setterInmuebles = app=>{
             return res.json({error:e})
         }
     })
+
+    app.post('/equipo/:id',async(req,res)=>{
+        try{
+            const modify = await modelequipo.findByIdAndUpdate(req.params.id,{$set:req.body})
+            return res.send(modify)
+        }catch(e){
+            return res.send(e)
+        }
+    })
 }
 
-module.exports={setterInmuebles}
+getterInmueble= app=>{
+    app.get('/propiedades',async(req,res)=>{
+        try{
+            const data=await modelPropiedad.find();
+            return res.send(data)
+        }catch(e){
+            return res.send(e)
+        }
+    })
+
+    app.get('/equipo',async (req,res)=>{
+        try{
+            const data =await modelequipo.find()
+            return res.send(data)
+        }catch(e){
+            return res.send(e)
+        }
+    })
+}
+
+module.exports={setterInmuebles,getterInmueble}
