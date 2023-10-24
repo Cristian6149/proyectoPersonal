@@ -100,11 +100,18 @@ body{
     transition: opacity 0.5s ease,width 0.5s ease;
     color: black;
 }
-.barra-lateral span.oculto{
-    opacity: 0;
-    width: 0;
+.luzBalance {
+    cursor: pointer;
+    margin-left: 98%;
+    align-items: center;
+    text-align: center;
+    border-radius: 5px;
 }
-
+.luzBalance :hover{
+    padding: 5px;
+    color: #f2f2f2;
+    transition: all;
+}
 /*------------> Nombre de la página */
 .barra-lateral .nombre-pagina{
     width: 100%;
@@ -114,6 +121,49 @@ body{
     display: flex;
     align-items: center;
 }
+
+/*@media (max-width: 660px){
+    .barra-lateral span{
+        opacity: 0;
+        width: 0; 
+        background: red;
+    }
+} 
+@media (max-width: 660px){
+    .barra-lateral .nombre-pagina{
+        margin-bottom: 5px;
+    }
+    .barra-lateral .modo-oscuro{
+        margin-bottom: 3px;
+    }
+}
+
+@media (max-width: 660px){
+    .barra-lateral{
+        position: fixed;
+        width: 20%;
+        padding-left: 0%;
+    } 
+     .max-barra-lateral{
+        left: 0;
+    }
+    .menu{
+        display: flex;
+    }
+   /* .menu ion-icon:nth-child(2){
+        display: none;
+    }
+    main{
+        margin-left: 0;
+    }
+    main.min-main{
+        margin-left: 0;
+    }
+     */
+
+
+/*--------------------------------------------------------*/
+
 .barra-lateral .nombre-pagina ion-icon{
     min-width: 50px;
     font-size: 40px;
@@ -182,6 +232,7 @@ body{
     min-width: 50px;
     font-size: 20px;
 }
+
 
 /*-----------------> Linea*/
 .barra-lateral .linea{
@@ -309,7 +360,11 @@ table {
     th {
     background-color: #f2f2f2;
     }
-
+.content-button{
+    text-align: center;
+    padding-top: 5%;
+    align-items: center;
+}
 
 /* 
 @media (max-height: 660px){

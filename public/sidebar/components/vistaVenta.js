@@ -9,8 +9,21 @@ Vue.component("vista_ventas",{
         }
     },
     mounted(){
-        this.getventas(),
-        this.getDetalles()
+        const self = this
+        store({
+            VENTASREALIZADAS(val){
+                self.ventas=val
+            },
+            GANANCIA_TOTAL(val){
+                self.GANANCIA_TOTAL = val
+            }, 
+            VENTA_TOTAL(val){
+                self.VENTAS_TOTALES=val
+            }
+         })
+        
+        self.getventas(),
+        self.getDetalles()
     },
     methods:{
         async getventas(){

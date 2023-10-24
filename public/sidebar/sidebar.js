@@ -39,3 +39,6 @@ cloud.addEventListener("click",()=>{
         span.classList.toggle("oculto");
     });
 });*/
+//document.body.style.backgroundColor="red"
+/* document.body.style.background="red"; */
+/* document.getElementById('luzBalance').style.background="red" */

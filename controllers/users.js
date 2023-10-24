@@ -92,9 +92,8 @@ const getters = app =>{
           return res.json({ message: 'Wrong credentials pass' });
       }
       process.env.JWT_EXPIRE="1d"
-      const token =  jwt.sign({ id: userExist._id }, process.env.SECRET_KEY, {
-          expiresIn: process.env.JWT_EXPIRE,
-      });
+      const token =  jwt.sign({ id: userExist._id }, process.env.SECRET_KEY);
+      console.log(token)
       
       return res.cookie("token",token).json({ success: true, message: 'LoggedIn Successfully', token: token })
        } catch (error) {

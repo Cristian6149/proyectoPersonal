@@ -18,7 +18,11 @@ Vue.component("almacen",{
         }
     },
     mounted(){
-        this.getProductos();
+      const self=this
+      store({productos(val){
+            self.listaProductos=val
+      }})
+      this.getProductos();
     }, 
     computed: {
       suma() {
@@ -29,19 +33,24 @@ Vue.component("almacen",{
         async getProductos(){
           this.sumaTotalStock=0;
             const result = await axios.get(`http://localhost:8000/api/productos`);
-            this.listaProductos=result.data.productos.map(res=>{
+             store('productos',result.data.productos.map(res=>{
               this.sumaTotalStock+=(res.stock*res.precioBase);
                 return res;
-            })
+            }))
             store('TOTAL_INVENTARIO', this.sumaTotalStock)
         },
         async agregarProducto(){
-           await axios.post('http://localhost:8000/api/agregarProducto',{
+           let response=await axios.post('http://localhost:8000/api/agregarProducto',{
             name:this.nombreNuevoProducto,
             precioBase:parseInt(this.precioBaseNuevoProducto),
             precioVenta:parseInt(this.precioVentaNuevoProducto),
             stock:parseInt(this.stockNuevoProducto)
            })
+           store( 'productos', (productos) => {
+             let lista = productos()
+             lista.push(response.data)	
+            return lista
+          })
         },
         async incrementarstock(){ 
             const suma=this.suma;
@@ -70,7 +79,6 @@ Vue.component("almacen",{
               <td>{{data.stock}}</td>
               <button @click="seleccionarProducto(data.name,data._id,data.stock),ventanamodal='stock'" onclick="openModal3()" >agregar stock</button>
            </tr>
-           <h4>TOTAL:  S/ {{sumaTotalStock}}</h4>
          </table>
          <button @click="ventanamodal='agregarProducto'" onclick="openModal3()">agregar productos</button>
          

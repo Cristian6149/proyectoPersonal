@@ -2,7 +2,7 @@ Vue.component("ventas",{
     data(){
         return {
             titulo1:"MENU DE VENTAS",
-            productos:[],
+            productosDisponibles:[],
             productoVenta:[],
             cantidad_pedido:0,
             TOTAL:0,
@@ -13,14 +13,38 @@ Vue.component("ventas",{
         }
     },
     mounted(){
+      const self=this
+      store({productos(val){
+            self.productosDisponibles=val
+      }})
+      
       this.getProductos();
     },
     methods:{
-        async getProductos(){
-            const result = await axios.get(`http://localhost:8000/api/productos`);
-            this.productos=result.data.productos.map(res=>{
-                return res;
-            })
+        async getProductos(){  
+          const self = this;    
+          try{
+            let result=await axios.get(`http://localhost:8000/api/productos`);
+            console.log(result)
+            /* self.productosDisponibles=result */
+              store('productos',result)
+          }catch(e){
+            console.log(e)
+          }
+            
+        },
+        getVentas(){
+            let VENTASTOTALES=0
+            let VENTASGANANCIA=0;
+                    axios.get('http://localhost:8000/api/venta').then((res)=>{
+                       store('VENTASREALIZADAS',res.data) 
+                        for(let e of res.data){
+                            VENTASTOTALES+=e.total
+                            VENTASGANANCIA+=e.totalganancia;
+                          }                           
+                           store('GANANCIA_TOTAL',VENTASGANANCIA)
+                           store('VENTA_TOTAL',VENTASTOTALES)
+                  })       
         },
         seleccionarProducto(produc){
              this.productoVenta.push({...produc,cantidad:0,subtotal:0});
@@ -31,8 +55,8 @@ Vue.component("ventas",{
           this.TOTAL+=precioVenta;
           this.TOTAL_GANANCIA+=ganancia;
         },
-        restar(precio){
-          const ganancia= precioVenta-precioBase;
+        restar(precio,precioBase){
+          const ganancia= precio-precioBase;
           this.TOTAL-=precio;
           this.TOTAL_GANANCIA-=ganancia;
         },
@@ -51,20 +75,42 @@ Vue.component("ventas",{
             console.log("error")
           })
         },
-        nuevoDetalle(idVenta){
-          const self = this;
-           for(let data of self.productoVenta){
-            axios.post('http://localhost:8000/api/venta/detalle',{
-              idVenta:idVenta,
-              idProducto:data._id,
-              subtotal:data.subtotal,
-              subtotalGanancia:(data.precioVenta-data.precioBase)*data.cantidad,
-              cantidad:data.cantidad
-            })
-            axios.post(`http://localhost:8000/api/productos/${data._id}`,{
-              stock:data.stock-data.cantidad
-            });
-           }
+        async nuevoDetalle(idVenta){
+          try{
+            const self = this; 
+            for(let data of self.productoVenta){
+              await axios.post('http://localhost:8000/api/venta/detalle',{
+                idVenta:idVenta,
+                idProducto:data._id,
+                subtotal:data.subtotal,
+                subtotalGanancia:(data.precioVenta-data.precioBase)*data.cantidad,
+                cantidad:data.cantidad
+              })
+              await axios.post(`http://localhost:8000/api/productos/${data._id}`,{
+                stock:data.stock-data.cantidad
+              });
+              let productoEncontrado = self.productosDisponibles.find(function(producto) {
+                return producto._id === data._id;
+              });
+              if (productoEncontrado) {
+                console.log(productoEncontrado)
+                productoEncontrado.stock=data.stock-data.cantidad;
+              }
+              store('productos',self.productosDisponibles)
+              
+             }  
+              
+            
+
+
+           this.getVentas()         
+           const nuevoArray=self.productoVenta.filter(objeto=>objeto._id === 'kcjknccn')
+           this.productoVenta=nuevoArray
+           this.TOTAL=0
+          }catch(e){
+            console.log(e)
+          }
+           
         },
         eliminarRegistro(id,precio,cantidad){
             this.TOTAL-=(precio*cantidad)
@@ -85,7 +131,7 @@ Vue.component("ventas",{
           <th>STOCK</th>
           <th></th>
         </tr>
-        <tr v-for="produc in productos">
+        <tr v-for="produc in productosDisponibles">
           <td>{{produc.name}}</td>
           <td>{{produc.precioVenta}}</td>
           <td>{{produc.stock}}</td>
@@ -148,9 +194,9 @@ Vue.component("ventas",{
               <input type="text" placeholder="opcional: apellido cliente" v-model='apellidoCliente'/>
               <input type="number" placeholder="dni cliente" v-model='dniCliente'/>
            </div><!--data usuario-->
-              <div class="btn-group  closee " role="group" aria-label="Basic example">
-                <button type="button" class="btn btn-success" onclick="closeModal()"  @click="registroVenta()">registrar</button>
-                <button type="button" class="btn btn-danger"  onclick="closeModal()">cancelar</button>
+              <div class="content-button">
+                <button type="submit" class="btn btn-success" onclick="closeModal()"  @click="registroVenta()">registrar</button>
+                <button type="button" class="btn btn-danger"  onclick="closeModal()" >cancelar</button>
               </div>
           </div>          
 

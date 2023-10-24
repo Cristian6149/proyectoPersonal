@@ -114,7 +114,7 @@ Vue.component("inmuebles",{
                <div v-show="section=='actualizarValorPropiedad'">
                      <h1>Actualizar valor de Propiedad</h1>
                      <input type=number placeholder="ingrese nuevo valor" v-model="nuevoValorPropiedad"/>
-                     <button @click="actualizarPropiedades()" onclick="closeModal5()">agregar</button>
+                     <button @click="actualizarPropiedades(),dataPropiedad()" onclick="closeModal5()">agregar</button>
                      <button   onclick="closeModal5()">cancelar</button>            
                </div>
                <div v-show="section=='agregarPropiedad'">
@@ -122,21 +122,21 @@ Vue.component("inmuebles",{
                    <input type="text" placeholder="ingrese nombre" v-model="nombreNuevo"/>
                    <input type="text" placeholder="ingrese descripcion" v-model="descripcionNuevo"/>
                    <input type="number" placeholder="ingrese valor de propiedad" v-model="saldoNuevo"/>
-                   <button @click="agregarPropiedades()" onclick="closeModal5()">agregar</button>
+                   <button @click="agregarPropiedades(),dataPropiedad()" onclick="closeModal5()">agregar</button>
                    <button   onclick="closeModal5()">cancelar</button>
                </div>           
                  <div v-show="section=='actualizarValorEquipo'">
                  <h1>Actualizar valor de Equipo</h1>
                  <input type=number placeholder="ingrese nuevo valor" v-model="nuevoValorPropiedad"/>
-                 <button @click="actualizarEquipo" onclick="closeModal5()">agregar</button>
+                 <button @click="actualizarEquipo(),dataEquipo()" onclick="closeModal5()">agregar</button>
                  <button   onclick="closeModal5()">cancelar</button>            
                </div>
                <div v-show="section=='agregarEquipo'">
                  <h1>agregar Equipo</h1>
                  <input type="text" placeholder="ingrese nombre" v-model="nombreNuevo"/>
                  <input type="text" placeholder="ingrese descripcion" v-model="descripcionNuevo"/>
-                 <input type="number" placeholder="ingrese valor de propiedad" v-model="saldoNuevo"/>
-                 <button @click="agregarEquipo()" onclick="closeModal5()">agregar</button>
+                 <input type="number" placeholder="ingrese valor de equipo" v-model="saldoNuevo"/>
+                 <button @click="agregarEquipo(),dataEquipo()" onclick="closeModal5()">agregar</button>
                  <button   onclick="closeModal5()">cancelar</button>
                </div> 
            </div><!--contenido--> 

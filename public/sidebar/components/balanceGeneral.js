@@ -22,57 +22,61 @@ Vue.component("balancegeneral",{
 
     }
   },
-  mounted(){ 	
-const self=this
-
-     // escuchamos cambios state.products
-    store({
-      GANANCIA_TOTAL(val){
-        self.ganancia_ventas = val
-        self.total_patrimonios+=self.ganancia_ventas
-      }, 
-      VENTA_TOTAL(val){
-        self.ventas_totales = val
+  mounted(){ 
+    const self = this;	
+    
+   // escuchamos cambios state.products
+   store({
+    GANANCIA_TOTAL(val){
+      self.ganancia_ventas = val
+      self.total_patrimonios+=self.ganancia_ventas
+    }, 
+    VENTA_TOTAL(val){
+      self.ventas_totales=val
         self.total_activosCirculantes+=self.ventas_totales
-      },
-      TOTAL_BANCO(val){
-       self.efectivo_banco=val
-       self.total_activosCirculantes+=self.efectivo_banco
-      },
-      TOTAL_INVENTARIO(val){
-        self.suma_inventario=val
-        self.total_activosCirculantes+=self.suma_inventario
-      },
-      TOTAL_EQUIPO(val){
-        self.suma_equipo=val
-        self.total_activosNoCirculantes+=self.suma_equipo
-      },
-      TOTAL_PROPIEDAD(val){
-        self.suma_propiedad=val
-        self.total_activosNoCirculantes+=self.suma_propiedad
-      },
-      SUMA_CAPITALSOCIAL(val){
-        self.suma_socios=val
-        self.total_patrimonios+=self.suma_socios
-      },
-      TOTAL_LARGOPLAZO(val){
-        self.suma_largoPlazo=val
-        self.total_pasivoNoCirculantes+=self.suma_largoPlazo
-      },
-      TOTAL_CORTOPLAZO(val){
-        self.suma_cortoPlazo=val
-        self.total_pasivoCirculantes+=self.suma_cortoPlazo
-      }
-    })
+    },
+    TOTAL_BANCO(val){
+     self.efectivo_banco=val
+     self.total_activosCirculantes+=self.efectivo_banco
+    },
+    TOTAL_INVENTARIO(val){
+      self.suma_inventario=val
+      self.total_activosCirculantes+=self.suma_inventario
+    },
+    TOTAL_EQUIPO(val){
+      self.suma_equipo=val
+      self.total_activosNoCirculantes+=self.suma_equipo
+    },
+    TOTAL_PROPIEDAD(val){
+      self.suma_propiedad=val
+      self.total_activosNoCirculantes+=self.suma_propiedad
+    },
+    SUMA_CAPITALSOCIAL(val){
+      self.suma_socios=val
+      self.total_patrimonios+=self.suma_socios
+    },
+    TOTAL_LARGOPLAZO(val){
+      self.suma_largoPlazo=val
+      self.total_pasivoNoCirculantes+=self.suma_largoPlazo
+    },
+    TOTAL_CORTOPLAZO(val){
+      self.suma_cortoPlazo=val
+      self.total_pasivoCirculantes+=self.suma_cortoPlazo
+       }
+      })
+
+     
   },
    methods:{
-       
        
    },
   template://html
   `
   <div>
   <h1>{{title}}</h1>
+  <div  id="luzBalance" class="luzBalance">
+  <ion-icon name="bulb-outline"></ion-icon>
+  </div>
   <h2>Balance General</h2>
   <h3>Fecha: [{{tiempo}}]</h3>
   <h4>Activos</h4>
