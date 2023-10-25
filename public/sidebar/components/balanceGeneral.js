@@ -28,40 +28,40 @@ Vue.component("balancegeneral",{
    // escuchamos cambios state.products
    store({
     GANANCIA_TOTAL(val){
-      self.ganancia_ventas = val
-      self.total_patrimonios+=self.ganancia_ventas
+      self.ganancia_ventas += val
+      self.total_patrimonios+=val
     }, 
     VENTA_TOTAL(val){
-      self.ventas_totales=val
-        self.total_activosCirculantes+=self.ventas_totales
+      self.ventas_totales+=val
+        self.total_activosCirculantes+=val
     },
     TOTAL_BANCO(val){
-     self.efectivo_banco=val
-     self.total_activosCirculantes+=self.efectivo_banco
+     self.efectivo_banco+=val
+     self.total_activosCirculantes+=val
     },
     TOTAL_INVENTARIO(val){
-      self.suma_inventario=val
-      self.total_activosCirculantes+=self.suma_inventario
+      self.suma_inventario += val
+      self.total_activosCirculantes += val
     },
     TOTAL_EQUIPO(val){
-      self.suma_equipo=val
-      self.total_activosNoCirculantes+=self.suma_equipo
+      self.suma_equipo+=val
+      self.total_activosNoCirculantes+=val
     },
     TOTAL_PROPIEDAD(val){
-      self.suma_propiedad=val
-      self.total_activosNoCirculantes+=self.suma_propiedad
+      self.suma_propiedad+=val
+      self.total_activosNoCirculantes+=val
     },
     SUMA_CAPITALSOCIAL(val){
       self.suma_socios=val
-      self.total_patrimonios+=self.suma_socios
+      self.total_patrimonios+=val
     },
     TOTAL_LARGOPLAZO(val){
-      self.suma_largoPlazo=val
-      self.total_pasivoNoCirculantes+=self.suma_largoPlazo
+      self.suma_largoPlazo+=val
+      self.total_pasivoNoCirculantes+=val
     },
     TOTAL_CORTOPLAZO(val){
-      self.suma_cortoPlazo=val
-      self.total_pasivoCirculantes+=self.suma_cortoPlazo
+      self.suma_cortoPlazo+=val
+      self.total_pasivoCirculantes+=val
        }
       })
 

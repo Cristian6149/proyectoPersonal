@@ -72,10 +72,14 @@ Vue.component("cuentas",{
         await axios.post(`http://localhost:8000/api/registrocuenta/${self.idretiro}`,{
           saldo:nuevoSaldo
         })
-        
-        
-        
-        
+          this.sumaTotalCuenta=0;
+          let resultado= await axios.get('http://localhost:8000/api/cuentas');
+          this.registroSaldo=resultado.data.map(e=>{
+            this.sumaTotalCuenta+=e.saldo;
+            return e
+          })
+          let dataEnvio = self.band ?parseInt(self.retiro) : parseInt(self.retiro)*(-1)
+           store('TOTAL_BANCO',dataEnvio)   
        },
       async setPrestamoCortoPlazo(){
         const self = this;
@@ -84,6 +88,18 @@ Vue.component("cuentas",{
        await axios.post(`http://localhost:8000/api/registrocortoplazo/${self.idretiro}`,{
         saldo:nuevoSaldo
        })
+
+       this.sumaTotalCortoPlazo=0;
+       const result = await axios.get('http://localhost:8000/api/registroprestamocortoplazo')
+       this.registroPrestamoCortoPlazo = result.data.map(res=>{
+         this.sumaTotalCortoPlazo+=res.saldo;
+        return res;
+       })
+       let dataEnvio = self.band ?parseInt(self.retiro) : parseInt(self.retiro)*(-1)
+       store('TOTAL_CORTOPLAZO',dataEnvio)
+
+
+
        },
       async setPrestamoLargoPlazo(){
         const self = this;
@@ -91,6 +107,18 @@ Vue.component("cuentas",{
        await axios.post(`http://localhost:8000/api/registrolargoplazo/${self.idretiro}`,{
         saldo:nuevoSaldo
        })
+/****************** */
+this.sumaTotalLargoPlazo=0;
+       const result = await axios.get('http://localhost:8000/api/registroprestamolargoplazo')
+       this.registroPrestamoLargoPlazo = result.data.map(res=>{
+         this.sumaTotalLargoPlazo+=res.saldo;
+        return res;
+       })
+       let dataEnvio = self.band ?parseInt(self.retiro) : parseInt(self.retiro)*(-1)
+       store('TOTAL_LARGOPLAZO',dataEnvio)
+
+/****************************************** */
+
        },    
      async setCapitalSocial(){
       const self = this;
@@ -98,45 +126,89 @@ Vue.component("cuentas",{
        await axios.post(`http://localhost:8000/api/registrocapital/${self.idretiro}`,{
         saldo:nuevoSaldo
        })
+
+
+      /****************** */
+this.sumaTotalCapitalSocial=0;
+const result = await axios.get('http://localhost:8000/api/registrocapitalsocial')
+this.registroCapitalSocial = result.data.map(res=>{
+  this.sumaTotalCapitalSocial+=res.saldo;
+ return res;
+})
+let dataEnvio = self.band ?parseInt(self.retiro) : parseInt(self.retiro)*(-1)
+store('SUMA_CAPITALSOCIAL',dataEnvio)
+
+/****************************************** */
+
+
+
+
       },
-      newCuenta(){
+      async newCuenta(){
         axios.post(`http://localhost:8000/api/registrocuenta`,{
           nombre:this.nombreNuevo,
-          saldo:this.saldoNuevo
-        }).then(()=>{
-          this.nombreNuevo=""
-          this.saldoNuevo=""
+          saldo:parseInt(this.saldoNuevo)
         })
+        this.sumaTotalCuenta=0;
+        const result = await axios.get('http://localhost:8000/api/cuentas');
+        this.registroSaldo = result.data.map(res=>{
+         this.sumaTotalCuenta+=res.saldo;
+         return res;
+        })
+        store('TOTAL_BANCO', parseInt(this.saldoNuevo))
+        this.nombreNuevo=""
+        this.saldoNuevo=""
       },
 
-      newCortoPlazo(){
+      async newCortoPlazo(){
         axios.post(`http://localhost:8000/api/registroprestamocortoplazo`,{
           nombre:this.nombreNuevo,
           saldo:this.saldoNuevo
-        }).then(()=>{
-          this.nombreNuevo=""
-          this.saldoNuevo=""
         })
+
+        this.sumaTotalCortoPlazo=0;
+        const result = await axios.get('http://localhost:8000/api/registroprestamocortoplazo')
+        this.registroPrestamoCortoPlazo = result.data.map(res=>{
+          this.sumaTotalCortoPlazo+=res.saldo;
+         return res;
+        })
+        store('TOTAL_CORTOPLAZO',parseInt(this.saldoNuevo))
+        this.nombreNuevo=""
+          this.saldoNuevo=""
       },
 
-      newLargoPlazo(){
+      async newLargoPlazo(){
         axios.post(`http://localhost:8000/api/registroprestamolargoplazo`,{
           nombre:this.nombreNuevo,
           saldo:this.saldoNuevo
-        }).then(()=>{
-          this.nombreNuevo=""
-          this.saldoNuevo=""
         })
+
+        this.sumaTotalLargoPlazo=0;
+        const result = await axios.get('http://localhost:8000/api/registroprestamolargoplazo')
+        this.registroPrestamoLargoPlazo = result.data.map(res=>{
+          this.sumaTotalLargoPlazo+=res.saldo;
+         return res;
+        })
+        store('TOTAL_LARGOPLAZO',parseInt(this.saldoNuevo))
+        this.nombreNuevo=""
+          this.saldoNuevo=""
       },
 
-      newCapitalSocial(){
+      async newCapitalSocial(){
         axios.post(`http://localhost:8000/api/registrocapitalsocial`,{
           nombre:this.nombreNuevo,
           saldo:this.saldoNuevo
-        }).then(()=>{
-          this.nombreNuevo=""
-          this.saldoNuevo=""
         })
+
+        this.sumaTotalCapitalSocial=0;
+        const result = await axios.get('http://localhost:8000/api/registrocapitalsocial')
+          this.registroCapitalSocial = result.data.map(res=>{
+          this.sumaTotalCapitalSocial+=res.saldo;
+         return res;
+        })
+         store('SUMA_CAPITALSOCIAL',parseInt(this.saldoNuevo))
+         this.nombreNuevo=""
+          this.saldoNuevo=""
       }
   },
     template://html
@@ -220,56 +292,56 @@ Vue.component("cuentas",{
                      <h1 v-show="band==false">retirarSaldo {{band}}</h1>
                      <h1 v-show="band==true">aumentarSaldo {{band}}</h1>
                      <input type=number placeholder="ingrese mont. " v-model="retiro"/>
-                     <button @click="setSaldo(),getSaldo()" onclick="closeModal4()">agregar</button>
+                     <button @click="setSaldo()" onclick="closeModal4()">agregar</button>
                      <button   onclick="closeModal4()">cancelar</button>            
                </div>
                <div v-show="section=='agregarCuenta'">
                <h1>agregarCuenta</h1>
                <input type="text" placeholder="ingrese nombre" v-model="nombreNuevo"/>
                <input type="number" placeholder="ingrese monto" v-model="saldoNuevo"/>
-               <button @click="newCuenta(),getSaldo()" onclick="closeModal4()">agregar</button>
+               <button @click="newCuenta()" onclick="closeModal4()">agregar</button>
                      <button   onclick="closeModal4()">cancelar</button>
                </div>           
                <div v-show="section=='retirarCortoPlazo'">
                       <h1 v-show="band==false">retirarCortoPlazo {{saldoretiro}}</h1>
                       <h1 v-show="band==true">aumentarCortoPlazo {{saldoretiro}}</h1>
                       <input type=number placeholder="ingrese mont. " v-model="retiro"/>
-                      <button @click="setPrestamoCortoPlazo(),getPrestamoCortoPlazo()" onclick="closeModal4()">agregar</button>
+                      <button @click="setPrestamoCortoPlazo()" onclick="closeModal4()">agregar</button>
                       <button   onclick="closeModal4()">cancelar</button> 
                </div>
                <div v-show="section=='agregarCortoPlazo'">
                       <h1>agregarCortoPlazo</h1>
                       <input type="text" placeholder="ingrese nombre" v-model="nombreNuevo"/>
                <input type="number" placeholder="ingrese monto" v-model="saldoNuevo"/>
-               <button @click="newCortoPlazo(),getPrestamoCortoPlazo()" onclick="closeModal4()">agregar</button>
+               <button @click="newCortoPlazo()" onclick="closeModal4()">agregar</button>
                      <button   onclick="closeModal4()">cancelar</button>
                </div>
                <div v-show="section=='retirarLargoPlazo'">
                       <h1 v-show="band==false">retirarLargoPlazo</h1>
                       <h1 v-show="band==true">aumentarLargoPlazo</h1>
                       <input type=number placeholder="ingrese mont. " v-model="retiro"/>
-                     <button @click="setPrestamoLargoPlazo(),getPrestamoLargoPlazo()" onclick="closeModal4()">agregar</button>
+                     <button @click="setPrestamoLargoPlazo()" onclick="closeModal4()">agregar</button>
                      <button   onclick="closeModal4()">cancelar</button>  
                </div>
                <div v-show="section=='agregarLargoPlazo'">
                       <h1>agregarLargoPlazo</h1>
                       <input type="text" placeholder="ingrese nombre" v-model="nombreNuevo"/>
                <input type="number" placeholder="ingrese monto" v-model="saldoNuevo"/>
-               <button @click="newLargoPlazo(),getPrestamoLargoPlazo()" onclick="closeModal4()">agregar</button>
+               <button @click="newLargoPlazo()" onclick="closeModal4()">agregar</button>
                      <button   onclick="closeModal4()">cancelar</button>
                </div>
                <div v-show="section=='retirarCapitalSocial'">
                       <h1 v-show="band==false">retirarCapitalSocial</h1>
                       <h1 v-show="band==true">aumentarCapitalSocial</h1>
                       <input type=number placeholder="ingrese mont. retirar" v-model="retiro"/>
-                     <button @click="setCapitalSocial(),getCapitalSocial()" onclick="closeModal4()">agregar</button>
+                     <button @click="setCapitalSocial()" onclick="closeModal4()">agregar</button>
                      <button   onclick="closeModal4()">cancelar</button>  
                </div>
                <div v-show="section=='agregaCapitalSocial'">
                       <h1>agregarCapitalSocial</h1>
                       <input type="text" placeholder="ingrese nombre" v-model="nombreNuevo"/>
                       <input type="number" placeholder="ingrese monto" v-model="saldoNuevo"/>
-                      <button @click="newCapitalSocial(),getCapitalSocial()" onclick="closeModal4()">agregar</button>
+                      <button @click="newCapitalSocial()" onclick="closeModal4()">agregar</button>
                       <button   onclick="closeModal4()">cancelar</button>
                </div>
            </div><!--contenido--> 

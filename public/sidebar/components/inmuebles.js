@@ -11,7 +11,8 @@ Vue.component("inmuebles",{
             saldoNuevo:"",
             idCollection:"",
             sumaTotalEquipo:0,
-            sumaTotalPropiedad:0
+            sumaTotalPropiedad:0,
+            valorActual:0
         }
     },
     mounted(){
@@ -44,6 +45,14 @@ Vue.component("inmuebles",{
           descripcion:this.descripcionNuevo,
           valor:this.saldoNuevo
         })
+
+        this.sumaTotalPropiedad=0;
+        let data = await axios.get('http://localhost:8000/api/propiedades')
+        this.registropropiedad=data.data.map(e=>{
+          this.sumaTotalPropiedad+=e.valor;
+          return e
+        })
+        store('TOTAL_PROPIEDAD',parseInt(this.saldoNuevo))
       },
 
       async agregarEquipo(){
@@ -52,18 +61,54 @@ Vue.component("inmuebles",{
           descripcion:this.descripcionNuevo,
           valor:parseInt(this.saldoNuevo)
         })
+
+        this.sumaTotalEquipo=0;
+        let data = await axios.get('http://localhost:8000/api/equipo')
+        this.registroequipo=data.data.map(e=>{
+          this.sumaTotalEquipo+=e.valor;
+          return e
+        })
+        store('TOTAL_EQUIPO', parseInt(this.saldoNuevo))
       },
 
       async actualizarEquipo(){
          await axios.post(`http://localhost:8000/api/equipo/${this.idCollection}`,{
           valor:parseInt(this.nuevoValorPropiedad)
         })
+
+        this.sumaTotalEquipo=0;
+        let data = await axios.get('http://localhost:8000/api/equipo')
+        this.registroequipo=data.data.map(e=>{
+          this.sumaTotalEquipo+=e.valor;
+          return e
+        })
+        let = nuevoValor=0;
+        if(parseInt(this.valorActual)>parseInt(this.nuevoValorPropiedad)){
+          nuevoValor=parseInt(this.valorActual)-parseInt(this.nuevoValorPropiedad)
+        }else{
+          nuevoValor=parseInt(this.nuevoValorPropiedad)-parseInt(this.valorActual)
+        }
+        store('TOTAL_EQUIPO',nuevoValor)
       },
 
       async actualizarPropiedades(){
          await axios.post(`http://localhost:8000/api/propiedades/${this.idCollection}`,{
           valor:parseInt(this.nuevoValorPropiedad)
         })
+
+        this.sumaTotalPropiedad=0;
+        let data = await axios.get('http://localhost:8000/api/propiedades')
+        this.registropropiedad=data.data.map(e=>{
+          this.sumaTotalPropiedad+=e.valor;
+          return e
+        })
+        let = nuevoValor=0;
+        if(parseInt(this.valorActual)>parseInt(this.nuevoValorPropiedad)){
+          nuevoValor=parseInt(this.valorActual)-parseInt(this.nuevoValorPropiedad)
+        }else{
+          nuevoValor=parseInt(this.nuevoValorPropiedad)-parseInt(this.valorActual)
+        }
+        store('TOTAL_PROPIEDAD',nuevoValor)
       }
     },
     template://html
@@ -81,7 +126,7 @@ Vue.component("inmuebles",{
            <td>{{data.nombre}}</td>
            <td>{{data.descripcion}}</td>
            <td>{{data.valor}}</td>
-           <button @click="section='actualizarValorPropiedad',idCollection=data._id" onclick="openModal5()">actualizar valor</button>
+           <button @click="section='actualizarValorPropiedad',idCollection=data._id,valorActual=data.valor" onclick="openModal5()">actualizar valor</button>
          </tr>
          <h4>TOTAL:  S/ {{sumaTotalPropiedad}}</h4>
          <button @click="section='agregarPropiedad'" onclick="openModal5()">agregar</button>
@@ -98,7 +143,7 @@ Vue.component("inmuebles",{
            <td>{{data.nombre}}</td>
            <td>{{data.descripcion}}</td>
            <td>{{data.valor}}</td>
-           <button @click="section='actualizarValorEquipo',idCollection=data._id" onclick="openModal5()">actualizar valor</button>
+           <button @click="section='actualizarValorEquipo',idCollection=data._id,valorActual=data.valor" onclick="openModal5()">actualizar valor</button>
          </tr>
          <h4>TOTAL:  S/ {{sumaTotalEquipo}}</h4>
          <button @click="section='agregarEquipo'" onclick="openModal5()">agregar</button>
@@ -114,7 +159,7 @@ Vue.component("inmuebles",{
                <div v-show="section=='actualizarValorPropiedad'">
                      <h1>Actualizar valor de Propiedad</h1>
                      <input type=number placeholder="ingrese nuevo valor" v-model="nuevoValorPropiedad"/>
-                     <button @click="actualizarPropiedades(),dataPropiedad()" onclick="closeModal5()">agregar</button>
+                     <button @click="actualizarPropiedades()" onclick="closeModal5()">agregar</button>
                      <button   onclick="closeModal5()">cancelar</button>            
                </div>
                <div v-show="section=='agregarPropiedad'">
@@ -122,13 +167,13 @@ Vue.component("inmuebles",{
                    <input type="text" placeholder="ingrese nombre" v-model="nombreNuevo"/>
                    <input type="text" placeholder="ingrese descripcion" v-model="descripcionNuevo"/>
                    <input type="number" placeholder="ingrese valor de propiedad" v-model="saldoNuevo"/>
-                   <button @click="agregarPropiedades(),dataPropiedad()" onclick="closeModal5()">agregar</button>
+                   <button @click="agregarPropiedades()" onclick="closeModal5()">agregar</button>
                    <button   onclick="closeModal5()">cancelar</button>
                </div>           
                  <div v-show="section=='actualizarValorEquipo'">
                  <h1>Actualizar valor de Equipo</h1>
                  <input type=number placeholder="ingrese nuevo valor" v-model="nuevoValorPropiedad"/>
-                 <button @click="actualizarEquipo(),dataEquipo()" onclick="closeModal5()">agregar</button>
+                 <button @click="actualizarEquipo()" onclick="closeModal5()">agregar</button>
                  <button   onclick="closeModal5()">cancelar</button>            
                </div>
                <div v-show="section=='agregarEquipo'">
@@ -136,7 +181,7 @@ Vue.component("inmuebles",{
                  <input type="text" placeholder="ingrese nombre" v-model="nombreNuevo"/>
                  <input type="text" placeholder="ingrese descripcion" v-model="descripcionNuevo"/>
                  <input type="number" placeholder="ingrese valor de equipo" v-model="saldoNuevo"/>
-                 <button @click="agregarEquipo(),dataEquipo()" onclick="closeModal5()">agregar</button>
+                 <button @click="agregarEquipo()" onclick="closeModal5()">agregar</button>
                  <button   onclick="closeModal5()">cancelar</button>
                </div> 
            </div><!--contenido--> 

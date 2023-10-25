@@ -19,7 +19,8 @@ Vue.component("almacen",{
     },
     mounted(){
       const self=this
-      store({productos(val){
+      store({
+        productos(val){
             self.listaProductos=val
       }})
       this.getProductos();
@@ -54,15 +55,31 @@ Vue.component("almacen",{
         },
         async incrementarstock(){ 
             const suma=this.suma;
+            const self = this
            await axios.post(`http://localhost:8000/api/productos/${this.productoSeleccionadoId}`,{
               stock:suma
             });
-            console.log(suma)
+           
+            let productoEncontrado = self.listaProductos.find(function(producto) {
+              return toString(producto._id) === toString(this.productoSeleccionadoId);
+            });
+            console.log("ffffffffff",productoEncontrado)
+            if (productoEncontrado) {
+              productoEncontrado.stock=this.productoSeleccionadoStock + parseInt(this.nuevoStock);
+              console.log("en el if -> ",this.productoSeleccionadoStock,"++",this.nuevoStock)
+            }
+            console.log(self.listaProductos)
+            store('productos',self.listaProductos)
+            let newStok=this.nuevoStock*this.productoSeleccionadoPrice
+            console.log("yyyyyyyyyyyy"+newStok)
+            store('TOTAL_INVENTARIO',newStok)
         },
-        seleccionarProducto(name,id,stock){
+        seleccionarProducto(name,id,stock,price){
             this.productoSeleccionadoName=name;
             this.productoSeleccionadoId=id;
             this.productoSeleccionadoStock=stock
+            this.productoSeleccionadoPrice=price
+            console.log(name,"+",id,"+",stock,"+",price)
         }
     },
     template://html
@@ -77,7 +94,7 @@ Vue.component("almacen",{
            <tr v-for="data in listaProductos">
               <td>{{data.name}}</td>
               <td>{{data.stock}}</td>
-              <button @click="seleccionarProducto(data.name,data._id,data.stock),ventanamodal='stock'" onclick="openModal3()" >agregar stock</button>
+              <button @click="seleccionarProducto(data.name,data._id,data.stock,data.precioBase),ventanamodal='stock'" onclick="openModal3()" >agregar stock</button>
            </tr>
          </table>
          <button @click="ventanamodal='agregarProducto'" onclick="openModal3()">agregar productos</button>
@@ -92,7 +109,7 @@ Vue.component("almacen",{
                        <h3>stock actual -> {{productoSeleccionadoStock}}</h3>
                        <input type="number" v-model="nuevoStock" placeholder="ingrese cant agregar" >
                        <button @click="nuevoStock=0" onclick="closeModal3()" >cancelar</button>
-                       <button @click="incrementarstock(),getProductos(),nuevoStock=0" onclick="closeModal3()" >agregar</button>
+                       <button @click="incrementarstock()" onclick="closeModal3()" >agregar</button>
                     </div>  <!--fin div agregar stock--> 
                     <div v-show="ventanamodal=='agregarProducto'">
                        <h1>AGREGANDO PRODUCTOS....</h1>

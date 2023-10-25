@@ -97,13 +97,16 @@ Vue.component("ventas",{
                 productoEncontrado.stock=data.stock-data.cantidad;
               }
               store('productos',self.productosDisponibles)
-              
+              let sumaVentaTotal=data.subtotal
+              let sumaGanaciaTotal=(data.precioVenta-data.precioBase)*data.cantidad
+              store('GANANCIA_TOTAL',sumaGanaciaTotal)
+              store('VENTA_TOTAL',sumaVentaTotal)
              }  
               
             
 
 
-           this.getVentas()         
+           //this.getVentas()         
            const nuevoArray=self.productoVenta.filter(objeto=>objeto._id === 'kcjknccn')
            this.productoVenta=nuevoArray
            this.TOTAL=0
