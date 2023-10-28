@@ -1,54 +1,62 @@
-Vue.component("vista_ventas",{
-    data(){
-        return {
-            titulo1:"REGISTRO DE VENTAS",
-            ventas:[],
-            detalleSeleccionado:[],
-            VENTAS_TOTALES:0,
-            GANANCIA_TOTAL:0
-        }
-    },
-    mounted(){
-        const self = this
-        store({
-            VENTASREALIZADAS(val){
-                self.ventas=val
-            },
-            GANANCIA_TOTAL(val){
-                self.GANANCIA_TOTAL = val
-            }, 
-            VENTA_TOTAL(val){
-                self.VENTAS_TOTALES=val
-            }
-         })
-        
-        self.getventas(),
-        self.getDetalles()
-    },
-    methods:{
-        async getventas(){
-            const result = await axios.get('http://localhost:8000/api/venta');
-                this.VENTAS_TOTALES=0;
-                this.GANANCIA_TOTAL=0;
+Vue.component("vista_ventas", {
+  data() {
+    return {
+      titulo1: "REGISTRO DE VENTAS",
+      ventas: [],
+      detalleSeleccionado: [],
+      VENTAS_TOTALES: 0,
+      GANANCIA_TOTAL: 0,
+      VENTASREALIZADAS:[]
+    };
+  },
+  mounted() {
+    const self = this;
+    store({
+      VENTASREALIZADAS(val) {
+        self.ventas = val;
+        console.log("ventasXD",val)
+      },
+      GANANCIA_TOTAL(val) {
+        self.GANANCIA_TOTAL = val;
+      },
+      VENTA_TOTAL(val) {
+        self.VENTAS_TOTALES = val;
+      }
+    });
 
-             this.ventas=result.data.map(res=>{
-                this.VENTAS_TOTALES+=res.total;
-                this.GANANCIA_TOTAL+=res.totalganancia;                
-                return res;
-            })
-            store('GANANCIA_TOTAL', this.GANANCIA_TOTAL)
-            store('VENTA_TOTAL', this.VENTAS_TOTALES)
-        },
-        async getDetalles(id){
-            const self = this;
-            const result = await axios.get(`http://localhost:8000/api/detalle/${id}`);
-            self.detalleSeleccionado=result.data.map(e=>{
-                return e;
-            })
-        }
+    self.getventas()
+    self.getDetalles();
+  },
+  methods: {
+    async getventas() {
+      const result = await axios.get("http://localhost:8000/api/venta");
+      this.VENTAS_TOTALES = 0;
+      this.GANANCIA_TOTAL = 0;
+      store("VENTASREALIZADAS",result.data.map(res=> {
+          this.VENTAS_TOTALES += res.total;
+          this.GANANCIA_TOTAL += res.totalganancia;
+          return res;
+        })
+      );
+      console.log(this.ventas);
+      store("GANANCIA_TOTAL", this.GANANCIA_TOTAL);
+      store("VENTA_TOTAL", this.VENTAS_TOTALES);
     },
-    template://html
-    `
+    async getDetalles(id) {
+      const self = this;
+      const result = await axios.get(`http://localhost:8000/api/detalle/${id}`);
+      self.detalleSeleccionado = result.data.map((e) => {
+        return e;
+      });
+    },
+    cambiar(){
+      store('VENTASREALIZADAS@set' , {
+        nombre:"gkgkgkgk"
+      } , item => (item.nombre == 'ggggggg'))
+    }
+  },
+  template:  //html
+   `
     <div>
      <table border="2">
      <tr >
@@ -67,7 +75,7 @@ Vue.component("vista_ventas",{
      </table>
      <h1>VENTAS TOTALES : {{VENTAS_TOTALES}}</h1>
      <h1>GANANCIA DEL DIA : {{GANANCIA_TOTAL}}</h1>
-     <button @click="getventas()">actualizar</button>
+     <button @click="cambiar()">actualizar</button>
     <!--xinicio modal-->
      
    <!-- Ventana Modal -->
@@ -94,5 +102,5 @@ Vue.component("vista_ventas",{
 
     <!--xfinal modal-->
     </div>
-    `
-})
+    `,
+});

@@ -52,7 +52,7 @@ Vue.component("balancegeneral",{
       self.total_activosNoCirculantes+=val
     },
     SUMA_CAPITALSOCIAL(val){
-      self.suma_socios=val
+      self.suma_socios+=val
       self.total_patrimonios+=val
     },
     TOTAL_LARGOPLAZO(val){
@@ -99,7 +99,7 @@ Vue.component("balancegeneral",{
     </tr>
     <tr>
       <th>Total de Activos Circulantes</th>
-      <td>S/. {{total_activosCirculantes}}</td>
+      <td  id="activocirculante">S/. {{total_activosCirculantes}}</td>
     </tr>
     <tr>
       <th>Activos No Circulantes</th>
@@ -119,7 +119,7 @@ Vue.component("balancegeneral",{
     </tr>
     <tr>
       <th>Total de Activos No Circulantes</th>
-      <td>S/. {{total_activosNoCirculantes}}</td>
+      <td id="activonocirculante">S/. {{total_activosNoCirculantes}}</td>
     </tr>
   </table>
 
@@ -162,7 +162,7 @@ Vue.component("balancegeneral",{
       <td>$xx,xxxx</td>
     </tr>
     <tr>
-      <th>Patrimonio Neto</th>
+      <th><h4>Patrimonio Neto</h4></th>
       <th></th>
     </tr>
     <tr>

@@ -47,11 +47,7 @@ Vue.component("almacen",{
             precioVenta:parseInt(this.precioVentaNuevoProducto),
             stock:parseInt(this.stockNuevoProducto)
            })
-           store( 'productos', (productos) => {
-             let lista = productos()
-             lista.push(response.data)	
-            return lista
-          })
+           store('productos@push',response.data)
         },
         async incrementarstock(){ 
             const suma=this.suma;
@@ -63,15 +59,11 @@ Vue.component("almacen",{
             let productoEncontrado = self.listaProductos.find(function(producto) {
               return toString(producto._id) === toString(this.productoSeleccionadoId);
             });
-            console.log("ffffffffff",productoEncontrado)
             if (productoEncontrado) {
               productoEncontrado.stock=this.productoSeleccionadoStock + parseInt(this.nuevoStock);
-              console.log("en el if -> ",this.productoSeleccionadoStock,"++",this.nuevoStock)
             }
-            console.log(self.listaProductos)
             store('productos',self.listaProductos)
             let newStok=this.nuevoStock*this.productoSeleccionadoPrice
-            console.log("yyyyyyyyyyyy"+newStok)
             store('TOTAL_INVENTARIO',newStok)
         },
         seleccionarProducto(name,id,stock,price){

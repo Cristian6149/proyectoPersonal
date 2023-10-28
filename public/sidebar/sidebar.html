@@ -354,38 +354,39 @@
     <script src="./components/inmuebles.js"></script>
     <script>     
       function validations(){
-        return {
-          products:[
-            ( state , value ) => {
-              if(!state.products) return true
-              let nombresProducts = value.map(i => i.name)
-              let names = new Set( nombresProducts )
-              if(names.size < nombresProducts.length){
-                return 'Ya existe un producto con ese nombre'
-              }
-              return true
-            }
-          
-            ,
-            ( state , value ) => {
-              if(!state.products) return true
-              for(let producto of value){
-                if( +producto.price < 0 ){
-                  return 'Los valores de precio no pueden ser negativos: '+producto.price
-                }
-        
-              }
-              return true
-            }
-          ]
-        }
-      }
+	return {
+		products:[
+			function nameUnique( state , value ) {
+				if(!state.products) return true
+				let nombresProducts = value.map(i => i.name)
+				let names = new Set( nombresProducts )
+				if(names.size < nombresProducts.length){
+					return 'Ya existe un producto con ese nombre'
+				}
+				return true
+			}
+		
+			,
+			function naturalNumber( state , value ) {
+				if(!state.products) return true
+				for(let producto of value){
+					if( +producto.price < 0 ){
+						return 'Los valores de precio no pueden ser negativos: '+producto.price
+					}
+	
+				}
+				return true
+			}
+		]
+	}
+}
       
-        window.store = createStore( validations())
+        createStore( validations())
          const app = new Vue({
         el:"#app",
         data:{
-            section:''
+            section:'',
+            VENTASREALIZADAS:[]
         },
         methods:{
             }
@@ -438,7 +439,9 @@
           document.getElementById("myModal5").style.display = "none";
         }
         var cambiarColor =10;
-        if(cambiarColor===11){
+        let actcirculante= document.getElementById("activocirculante").value;
+        console.log("desde java scrip -> ",actcirculante)
+        if(cambiarColor===10){
           document.getElementById("luzBalance").style.background="red"
         }else{
           document.getElementById("luzBalance").style.background="green"

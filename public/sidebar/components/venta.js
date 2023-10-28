@@ -17,7 +17,7 @@ Vue.component("ventas",{
       store({productos(val){
             self.productosDisponibles=val
       }})
-      
+
       this.getProductos();
     },
     methods:{
@@ -71,6 +71,12 @@ Vue.component("ventas",{
           }).then(res=>{
             const id=res.data.data1._id
             self.nuevoDetalle(id);
+            store('VENTASREALIZADAS@push',{
+              nombre:self.nombreCliente,
+              apellido:self.apellidoCliente,
+              dni:self.dniCliente,
+              total:self.TOTAL,
+              totalganancia:self.TOTAL_GANANCIA})
           }).catch(e=>{
             console.log("error")
           })
@@ -101,10 +107,9 @@ Vue.component("ventas",{
               let sumaGanaciaTotal=(data.precioVenta-data.precioBase)*data.cantidad
               store('GANANCIA_TOTAL',sumaGanaciaTotal)
               store('VENTA_TOTAL',sumaVentaTotal)
+              store('TOTAL_INVENTARIO',((data.precioVenta-data.precioBase)*data.cantidad)*-1)
              }  
-              
-            
-
+             
 
            //this.getVentas()         
            const nuevoArray=self.productoVenta.filter(objeto=>objeto._id === 'kcjknccn')
@@ -119,8 +124,21 @@ Vue.component("ventas",{
             this.TOTAL-=(precio*cantidad)
           const nuevoArray = this.productoVenta.filter(objeto => objeto._id !== id);
           this.productoVenta=nuevoArray
+        },
+      getDataCliente(){
+          axios.get(`https://apiperu.dev/api/dni/${this.dniCliente}?api_token=7f79affab8ace91630e05ffcae6b44e906e173206016d3a5b7f3153f5a7a7e53`).
+          then(datos=>{
+            console.log(datos)
+   
+            this.nombreCliente=datos.data.data.nombres;
+            this.apellidoCliente=datos.data.data.apellido_materno+' '+datos.data.data.apellido_paterno
+          }).catch(e=>{
+            console.log(e)
+          })
+            
+
+      
         }
-        
     },
     template://html
     `
@@ -192,12 +210,13 @@ Vue.component("ventas",{
                 </div><!--fin div tabla 2-->
               
               <div><!--data usuario-->
-              <h3>Ingrese datos:</h3>
-              <input type="text" placeholder="nombre cliente" v-model='nombreCliente'/>
-              <input type="text" placeholder="opcional: apellido cliente" v-model='apellidoCliente'/>
+              <h3>Ingrese datos:{{dniCliente}}</h3>
               <input type="number" placeholder="dni cliente" v-model='dniCliente'/>
+              <input type="text" placeholder="nombre cliente" v-model='nombreCliente'/>
+              <input type="text" placeholder="opcional: apellido cliente" v-model='apellidoCliente'/>              
            </div><!--data usuario-->
               <div class="content-button">
+              <button @click="getDataCliente()">buscar</button>
                 <button type="submit" class="btn btn-success" onclick="closeModal()"  @click="registroVenta()">registrar</button>
                 <button type="button" class="btn btn-danger"  onclick="closeModal()" >cancelar</button>
               </div>
