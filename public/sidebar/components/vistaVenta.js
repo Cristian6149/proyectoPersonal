@@ -6,7 +6,9 @@ Vue.component("vista_ventas", {
       detalleSeleccionado: [],
       VENTAS_TOTALES: 0,
       GANANCIA_TOTAL: 0,
-      VENTASREALIZADAS:[]
+      VENTASREALIZADAS:[],
+      buscarVenta:"",
+      buscarVenta2:""
     };
   },
   mounted() {
@@ -24,10 +26,32 @@ Vue.component("vista_ventas", {
       }
     });
 
-    self.getventas()
-    self.getDetalles();
+    /* self.getventas()
+    self.getDetalles(); */
   },
   methods: {
+    async getVentasBuscar(event){  
+      const self = this;   
+      console.log(self.buscarVenta)
+      console.log("evento xd",event) 
+      try{
+        let result=await axios.get(`http://localhost:8000/api/venta/?q=${self.buscarVenta}&q2=${self.buscarVenta2}`);
+        console.log(result.data)
+        result.data.map(res=>{
+          console.log("map",res)
+        })
+        store("VENTASREALIZADAS",result.data.map(res=> {
+          this.VENTAS_TOTALES += res.total;
+          this.GANANCIA_TOTAL += res.totalganancia;
+          return res;
+        })
+      );
+          //store('productos',result)
+      }catch(e){
+        console.log("error xd cath",e)
+      }
+        
+    },
     async getventas() {
       const result = await axios.get("http://localhost:8000/api/venta");
       this.VENTAS_TOTALES = 0;
@@ -58,6 +82,11 @@ Vue.component("vista_ventas", {
   template:  //html
    `
     <div>
+    
+    <h1>{{buscarVenta}}</h1>
+    <h1>{{buscarVenta2}}</h1>
+    <input type="date"  v-model="buscarVenta" @change="getVentasBuscar($event)"/>
+    <input type="date"  v-model="buscarVenta2" @change="getVentasBuscar($event)"/>
      <table border="2">
      <tr >
          <th>CLIENTE</th>

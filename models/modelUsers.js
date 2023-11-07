@@ -1,5 +1,9 @@
 const mongoose=require('mongoose')
+const fechaActual = new Date();
 
+const dia = String(fechaActual.getDate()).padStart(2, '0');
+const mes = String(fechaActual.getMonth() + 1).padStart(2, '0'); // Los meses empiezan en 0, así que se suma 1
+const anio = fechaActual.getFullYear(); 
 const usuarios=new mongoose.Schema({
     name: {
         type:String,
@@ -40,6 +44,9 @@ const producto = new mongoose.Schema({
     stock:{
         type:Number,
         require:true
+    },
+    codigo:{
+        type:String
     }
 })
 
@@ -86,7 +93,7 @@ const venta = new mongoose.Schema({
     },
     fecha:{
       type:Date,
-      default: new Date()
+      default:new Date('2023-11-06')
     },
     total:{
         type:Number,

@@ -211,6 +211,61 @@
           text-decoration: none;
           cursor: pointer;
         }
+        .tag-input {
+          /* Aquí puede agregar los estilos que desee */
+          padding: 5px;
+          font-size: 14px;
+          border: 1px solid #ccc;
+          outline: none;
+        }
+        /*ICONO TEXTO INFORMATIVO*/
+.contenedor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 1vh;
+  }
+  
+  .icono {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+  
+  .texto {
+    position: absolute;
+    top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: none;
+  z-index: 2; /* Valor alto para que esté por encima de otros elementos */
+
+  }
+  .modificar{
+    background: green;
+    color: white;
+  }
+  .eliminar{
+    background-color: red;
+    color: white;
+  }
+ .qr{
+    background-color: blue;
+    color: white;
+  }
+  
+  .icono:hover .texto {
+    display: block;
+  }
+  .texto:hover{
+    visibility: hidden;
+  }
+  
+  /*FIN ICONO TEXTO INFORMATIVO*/
       </style>
 
 </head>
@@ -226,10 +281,6 @@
                 <ion-icon id="cloud" name="cloud-outline"></ion-icon>
                 <span>NeverStore2.0</span>
             </div>
-            <button class="boton">
-                <ion-icon name="add-outline"></ion-icon>
-                <span class="spanText">Create new</span>
-            </button>
         </div>
 
         <nav class="navegacion ">
@@ -312,8 +363,7 @@
 
 
     <main >
-        <div v-show="section=='home'" id="home">
-           
+        <div v-show="section=='home'" id="home">         
         </div>
         <div v-show="section=='vender'">
            <ventas></ventas>
@@ -322,7 +372,6 @@
             <vista_ventas></vista_ventas>
         </div>
         <div v-show="section=='almacen'">
-            <h1>almacen</h1>
             <almacen></almacen>
         </div>
         <div v-show="section=='cuentas'">
@@ -339,6 +388,7 @@
     </main>    
 </div>
 <script src="./store.js"></script>
+<script src="./JsBarcode.all.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
@@ -385,7 +435,7 @@
          const app = new Vue({
         el:"#app",
         data:{
-            section:'',
+            section:'home',
             VENTASREALIZADAS:[]
         },
         methods:{
@@ -438,10 +488,9 @@
         function closeModal5() {
           document.getElementById("myModal5").style.display = "none";
         }
-        var cambiarColor =10;
-        let actcirculante= document.getElementById("activocirculante").value;
-        console.log("desde java scrip -> ",actcirculante)
-        if(cambiarColor===10){
+        var cambiarColor =document.getElementById("ventasTotales").innerText.trim().match('/\d+/');
+        console.log(cambiarColor)
+        if(cambiarColor==='12'){
           document.getElementById("luzBalance").style.background="red"
         }else{
           document.getElementById("luzBalance").style.background="green"

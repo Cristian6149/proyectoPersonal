@@ -185,7 +185,7 @@ body{
 
 
 /*------------> Botón*/
-.barra-lateral .boton{
+/* .barra-lateral .boton{
     width: 100%;
     height: 45px;
     margin-bottom: 20px;
@@ -200,7 +200,7 @@ body{
     min-width: 50px;
     font-size: 25px;
     color: #ffffff;
-}
+} */
 
 /*--------------> Menu Navegación*/
 .barra-lateral .navegacion{
@@ -359,11 +359,11 @@ main.min-main{
 
 table {
     border-collapse: collapse;
-    width: 100%;
+    width: 50%;
     }
     th, td {
-    text-align: left;
-    padding: 8px;
+    text-align: center;
+    padding: 5px;
     border-bottom: 1px solid #ddd;
     }
     th {
@@ -373,6 +373,13 @@ table {
     text-align: center;
     padding-top: 5%;
     align-items: center;
+}
+.alamacen-estatico{
+    position: sticky;
+    top: 0px;
+    background-color: #888C87;
+    color: #ddd;
+    text-align: center;
 }
 
 /* 

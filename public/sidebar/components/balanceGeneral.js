@@ -91,7 +91,7 @@ Vue.component("balancegeneral",{
     </tr>
     <tr>
       <td>Ventas Realizadas</td>
-      <td>S/. {{ventas_totales}}</td>
+      <td id="ventasTotales">S/. {{ventas_totales}}</td>
     </tr>
     <tr>
       <td>Inventarios</td>

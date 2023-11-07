@@ -95,14 +95,14 @@ function createStore( validations ){
 				}
 				return updateState( key , data )
 			},
-			removeBy( key , data , attr, value ){
-				for(let i=0; i<data.length; i++){
-					if(data[i][attr] == value){
+			removeBy(key, data, value, attr, attrValue) {
+				for (let i = 0; i < data.length; i++) {
+					if (data[i][attr] == attrValue) {
 						data.splice(i, 1)
 						break
 					}
 				}
-				return updateState( key , data )
+				return updateState(key, data)
 			}
 		}
 		if(typeof useKey == 'object'){
@@ -123,22 +123,22 @@ function createStore( validations ){
 			}
 			return 0
 		}
-		if(typeof useKey == 'string'){
-			if( useKey.split('@').length === 2 ){
+		if (typeof useKey == 'string') {
+			if (useKey.split('@').length === 2) {
 				let action = useKey.split('@')[1].split('/')[0]
 				let key = useKey.split('@')[0]
 				let attr = ''
 				let attrValue = ''
-				if(useKey.split('@')[1].split('/').length == 3){
-					let actionQuery = useKey.split('@')[0].split('/')
+				if (useKey.split('@')[1].split('/').length == 3) {
+					let actionQuery = useKey.split('@')[1].split('/')
 					action = actionQuery[0]
 					attr = actionQuery[1]
 					attrValue = actionQuery[2]
 				}
-				if(actions[action]){
-					return actions[action]( key , getValue(state[key]) , value , attr , attrValue )
-				}else{
-					console.log('no existe la accion '+action)
+				if (actions[action]) {
+					return actions[action](key, getValue(state[key]), value, attr, attrValue)
+				} else {
+					console.log('no existe la accion ' + action)
 				}
 			}
 		}

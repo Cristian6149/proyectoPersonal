@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs')
 const dotenv = require('dotenv')
 const jwt = require('jsonwebtoken')
 const isAuthenticated = require('../middleware/auth');
+const moment= require('moment')
 dotenv.config({path:'../config/config.env'})
 const { modelUsuarios,modelProducto,modelVenta,modelDetalle } = require('../models/modelUsers.js')
 
@@ -103,7 +104,12 @@ const getters = app =>{
 
       app.get('/productos', async (req, res) => {
         try {
-            const productos = await modelProducto.find();
+            let findS=req.query['q'] ?req.query['q'] : ""
+            console.log(findS)
+            /*-------------------------- */
+            
+           const productos = await modelProducto.find(findS ? { name:{$regex: findS,$options:'i'} }:undefined).sort({stock:-1}).limit(5);
+            console.log("pruebas",productos) 
             if (!productos) {
                 return res.json({ message: 'No product found' })
             }
@@ -111,7 +117,17 @@ const getters = app =>{
         } catch (error) {
             return res.json({ error: error });
         }
-    })
+       })
+
+       app.post('/delete',async (req,res)=>{
+             let idEliminar=req.query['id'] 
+            try {
+               await modelProducto.findByIdAndDelete(idEliminar);
+               console.log('Producto eliminado correctamente');
+            } catch (error) {
+               console.error('Error al eliminar el Producto:', error);
+            }
+       })
 
     app.post('/productos/:id', async (req, res) => {
         try {
@@ -134,8 +150,13 @@ const getters = app =>{
 
     //GET ALL
     app.get('/venta',async (req,res)=>{
+        let findS=req.query['q'] ?req.query['q'] : ""
+        let findS2=req.query['q2'] ?req.query['q2'] : ""
+            console.log(findS)
+            console.log(findS2)
         try{
-            const getVenta = await modelVenta.find()
+            const getVenta = await modelVenta.find(findS ? {fecha:{$gte:findS,$lte:findS2}}:undefined);
+             console.log(getVenta)
             res.status(200).json(getVenta)
         }catch(e){
             res.status(500).json(e);

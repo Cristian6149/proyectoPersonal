@@ -9,25 +9,29 @@ Vue.component("ventas",{
             TOTAL_GANANCIA:0,
             nombreCliente:'',
             apellidoCliente:'',
-            dniCliente:''
+            dniCliente:'',
+            buscarProducto:''
         }
     },
     mounted(){
       const self=this
-      store({productos(val){
+      /* store({productos(val){
             self.productosDisponibles=val
-      }})
+      }}) */
 
-      this.getProductos();
+      //this.getProductos();
     },
     methods:{
-        async getProductos(){  
-          const self = this;    
+        async getProductosBuscar(event){  
+          const self = this;   
+          console.log(self.buscarProducto)
+          console.log("1",event) 
           try{
-            let result=await axios.get(`http://localhost:8000/api/productos`);
+            let result=await axios.get(`http://localhost:8000/api/productos/?q=${self.buscarProducto}`);
+            console.log("2",event.value)
             console.log(result)
-            /* self.productosDisponibles=result */
-              store('productos',result)
+             self.productosDisponibles=result.data.productos
+              //store('productos',result)
           }catch(e){
             console.log(e)
           }
@@ -72,6 +76,7 @@ Vue.component("ventas",{
             const id=res.data.data1._id
             self.nuevoDetalle(id);
             store('VENTASREALIZADAS@push',{
+              _id:id,
               nombre:self.nombreCliente,
               apellido:self.apellidoCliente,
               dni:self.dniCliente,
@@ -145,6 +150,8 @@ Vue.component("ventas",{
     <div>
     <h1>{{titulo1}}</h1>
      <div><!--inicio div tabla1-->
+     <h1>{{buscarProducto}}</h1>
+     <input type="search" class="buscador" v-model="buscarProducto" @change="getProductosBuscar($event)"/>
       <table>
         <tr>
           <th>PRODUCTO</th>
