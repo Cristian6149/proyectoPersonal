@@ -108,7 +108,7 @@ const getters = app =>{
             console.log(findS)
             /*-------------------------- */
             
-           const productos = await modelProducto.find(findS ? { name:{$regex: findS,$options:'i'} }:undefined).sort({stock:-1}).limit(5);
+           const productos = await modelProducto.find(findS ? { name:{$regex: findS,$options:'i'} }:undefined).sort({codigo:-1}).limit(5);
             console.log("pruebas",productos) 
             if (!productos) {
                 return res.json({ message: 'No product found' })

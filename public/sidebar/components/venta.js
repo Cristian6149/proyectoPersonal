@@ -29,8 +29,12 @@ Vue.component("ventas",{
           try{
             let result=await axios.get(`http://localhost:8000/api/productos/?q=${self.buscarProducto}`);
             console.log("2",event.value)
-            console.log(result)
-             self.productosDisponibles=result.data.productos
+            console.log("busqueda",result.data.productos)
+            result.data.productos.map(res=>{
+              self.productosDisponibles.push(res)
+              console.log(res)
+             })
+             console.log(self.productosDisponibles)
               //store('productos',result)
           }catch(e){
             console.log(e)
@@ -225,7 +229,7 @@ Vue.component("ventas",{
               <div class="content-button">
               <button @click="getDataCliente()">buscar</button>
                 <button type="submit" class="btn btn-success" onclick="closeModal()"  @click="registroVenta()">registrar</button>
-                <button type="button" class="btn btn-danger"  onclick="closeModal()" >cancelar</button>
+                <button type="button" class="btn btn-danger" @click="productosDisponibles=[]" onclick="closeModal()" >cancelar</button>
               </div>
           </div>          
 

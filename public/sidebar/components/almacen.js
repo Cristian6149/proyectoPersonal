@@ -7,15 +7,14 @@ Vue.component("almacen", {
       productoSeleccionadoName: "",
       productoSeleccionadoId: "",
       productoSeleccionadoStock: 0,
-      nuevoStock: 0,
       ventanamodal: "",
       nombreNuevoProducto: "",
       precioBaseNuevoProducto: "",
       precioVentaNuevoProducto: "",
       stockNuevoProducto: "",
       sumaTotalStock: 0,
-      codigo: "",
-      contador:99
+      codigoMaximo:0,
+      contador:0,
     };
   },
   mounted() {
@@ -28,39 +27,35 @@ Vue.component("almacen", {
     this.getProductos();
   },
   computed: {
-    suma() {
-      return this.productoSeleccionadoStock + parseInt(this.nuevoStock);
-    },
     formatoContador() {
       return this.contador.toString().padStart(4, '0');
     }
   },
-  methods: {
-    incrementar() {
-      this.contador++;
-    },
-    async getProductos() {
+  methods: { 
+   async getProductos() {
       this.sumaTotalStock = 0;
       const result = await axios.get(`http://localhost:8000/api/productos`);
       store(
         "productos",
         result.data.productos.map((res) => {
           this.sumaTotalStock += res.stock * res.precioBase;
+          this.codigoMaximo=res.codigo > this.codigoMaximo ? res.codigo : this.codigoMaximo
           return res;
         })
       );
       store("TOTAL_INVENTARIO", this.sumaTotalStock);
     },
     agregarProducto() {
-      axios
-        .post("http://localhost:8000/api/agregarProducto", {
-          name: this.nombreNuevoProducto,
-          precioBase: parseInt(this.precioBaseNuevoProducto),
-          precioVenta: parseInt(this.precioVentaNuevoProducto),
-          stock: parseInt(this.stockNuevoProducto),
+      axios.post("http://localhost:8000/api/agregarProducto", {
+        name:this.productoPermanente[0].codigo,
+        precioBase:parseInt(this.productoPermanente[0].precioBase),
+        precioVenta:parseInt(this.productoPermanente[0].precioVenta),
+        stock:parseInt(this.productoPermanente[0].stock),
+        codigo:this.productoPermanente[0].codigo
         })
         .then((response) => {
           store("productos@push", response.data.data);
+          this.clearProductoPermanente()
         });
     },
     async eliminarProducto(name,ids,cod){
@@ -71,13 +66,32 @@ Vue.component("almacen", {
         store(`productos@removeBy/codigo/${cod}`)
        }
     },
-    async incrementarstock() {
-      await axios.post(
-        `http://localhost:8000/api/productos/${this.productoSeleccionadoId}`,
+    clearProductoPermanente(){
+      this.productoPermanente.splice(0,1)
+      console.log(this.productoPermanente)
+    },
+    ModificarProducto() {
+      axios.post(
+        `http://localhost:8000/api/productos/${this.productoPermanente[0]._id}`,
         {
-          stock: this.suma,
+          name:this.productoPermanente[0].codigo,
+          precioBase:this.productoPermanente[0].precioBase,
+          precioVenta:this.productoPermanente[0].precioVenta,
+          stock:this.productoPermanente[0].stock,
+          codigo:this.productoPermanente[0].codigo
         }
-      );
+      ).then(()=>{
+        store("productos@set",{
+          name:this.productoPermanente[0].codigo,
+          precioBase:this.productoPermanente[0].precioBase,
+          precioVenta:this.productoPermanente[0].precioVenta,
+          stock:this.productoPermanente[0].stock,
+          codigo:this.productoPermanente[0].codigo
+          },(item) => item._id == this.productoPermanente[0]._id
+          );
+          this.clearProductoPermanente();
+        }
+      )
 
       /*let productoEncontrado = self.listaProductos.find(function(producto) {
               return toString(producto._id) === toString(this.productoSeleccionadoId);
@@ -86,16 +100,16 @@ Vue.component("almacen", {
               productoEncontrado.stock=this.productoSeleccionadoStock + parseInt(this.nuevoStock);
             }
             store('productos',self.listaProductos)*/
-      let newStok = this.nuevoStock * this.productoSeleccionadoPrice;
-      store("TOTAL_INVENTARIO", newStok);
+      //let newStok = this.nuevoStock * this.productoSeleccionadoPrice;
+      //store("TOTAL_INVENTARIO", newStok);
 
-      store(
+     /*  store(
         "productos@set",
         {
           stock: this.suma,
         },
         (item) => item._id == this.productoSeleccionadoId
-      );
+      ); */
     },
     seleccionarProducto(id,cod,name,prBs,prVt, stock) {
       /* this.productoSeleccionadoName = name;
@@ -111,17 +125,26 @@ Vue.component("almacen", {
         stock:stock
       };
       this.productoPermanente.push(newData)
-      this.$refs.ref="miInput"
       console.log(newData)
       console.log(this.productoPermanente)
 
     },
-    setInputValue(value) {
-      this.$refs.myInput.value = value;
+    dataPermanente(){
+      let n=parseInt(this.codigoMaximo)+1
+      this.codigoMaximo=n.toString().padStart(4, '0');
+      let newData={
+        _id:'',
+        codigo:this.codigoMaximo,
+        name:'',
+        precioBase:'',
+        precioVenta:'',
+        stock:''
+      };
+    this.productoPermanente.push(newData)
     },
-    generarCodigo() {
+    generarCodigo(cod) {
       // Llamada a JsBarcode para generar el código de barras
-      JsBarcode(this.$refs.codigoBarras, this.codigo);
+      JsBarcode(this.$refs.codigoBarras,cod);
     },
   },
   //html
@@ -129,10 +152,6 @@ Vue.component("almacen", {
    `
        <div>
         <h1 class="alamacen-estatico">{{title}}</h1>
-        <div id="app">
-          <button @click="incrementar">Incrementar</button>
-          <div>{{ formatoContador }}</div>
-        </div>
          <table>
          <tr>
            <th>CODIGO</th>
@@ -167,7 +186,7 @@ Vue.component("almacen", {
                     </div></td><!--fin contenedor-->
 
                     <td><div class="contenedor"><!--inicio contenedor-->
-                      <div class="icono"  @click="codigo=data.codigo,generarCodigo(),ventanamodal='verqr'" onclick="openModal3()">
+                      <div class="icono"  @click="generarCodigo(data.codigo),ventanamodal='verqr'" onclick="openModal3()">
                       <ion-icon name="qr-code-sharp"></ion-icon>
                         <div class="texto qr">
                          <p >VER QR</p>
@@ -178,36 +197,46 @@ Vue.component("almacen", {
            </tr>
          </table>
          <ion-icon name="add-sharp"></ion-icon>
-         <button @click="ventanamodal='agregarProducto'" onclick="openModal3()">agregar productos</button>
+         <button @click="dataPermanente(),ventanamodal='agregarProducto'" onclick="openModal3()">agregar productos</button>
          
          
          <!-- Ventana Modal -->
                <div id="myModal3" class="modal3">
                 <div class="modal-content3">
-                 <span class="close3" onclick="closeModal3()">&times;</span>
+                 <span class="close3" @click="clearProductoPermanente()" onclick="closeModal3()">&times;</span>
                    <div v-show="ventanamodal=='stock'">
                        <h2>MODIFICAR</h2>
                        <tr v-for="data in productoPermanente">
-                       <input :value="data.codigo" @input="updateInputValue" type="text" />
-                       <input :value="data.name" type="text"/>
-                       <input :value="data.precioBase" type="text"/>
-                       <input :value="data.precioVenta" type="text"/>
-                       <input :value="data.stock" type="text"/>
+                       <label for="fcodigo">CODIGO:</label>
+                       <input type="text" id="fcodigo" v-model="productoPermanente[0].codigo" :value="data.codigo" />
+                       <label for="fnombre">NOMBRE:</label>
+                       <input  type="text" id="fnombre" v-model="productoPermanente[0].name" :value="data.name"/>
+                       <label for="fpre-base">PR.BASE:</label>
+                       <input type="text" id="fpre-base" v-model="productoPermanente[0].precioBase"  :value="data.precioBase" />
+                       <label for="fpre-venta">PR.VENTA:</label>
+                       <input  type="text" id="fpre-venta" v-model="productoPermanente[0].precioVenta :value="data.precioVenta""/><br/>
+                       <label for="fstock">STOCK:</label>
+                       <input  type="text" id="fstock" v-model="productoPermanente[0].stock" :value="data.stock"/>
                        </tr>
-                       <h1>{{productoSeleccionadoName}}</h1>
-
                        <h3>stock actual -> {{productoSeleccionadoStock}}</h3>
-                       <input type="number" v-model="nuevoStock" placeholder="ingrese cant agregar" >
-                       <button @click="nuevoStock=0" onclick="closeModal3()" >cancelar</button>
-                       <button @click="incrementarstock()" onclick="closeModal3()" >agregar</button>
+                       <button @click="clearProductoPermanente()" onclick="closeModal3()" >cancelar</button>
+                       <button @click="ModificarProducto()" onclick="closeModal3()" >agregar</button>
                     </div>  <!--fin div agregar stock--> 
                     <div v-show="ventanamodal=='agregarProducto'">
-                       <h1>AGREGANDO PRODUCTOS....</h1>
-                       <input type="text" placeholder="ingrese nombre producto" v-model="nombreNuevoProducto"/>
-                       <input type="text" placeholder="ingrese precio base" v-model="precioBaseNuevoProducto"/>
-                       <input type="text" placeholder="ingrese precio venta" v-model="precioVentaNuevoProducto"/>
-                       <input type="text" placeholder="ingrese stock" v-model="stockNuevoProducto"/>
-                       <button onclick="closeModal3()">cancelar</button>
+                       <h2>NUEVO PRODUCTO</h2>
+                       <tr v-for="data in productoPermanente">
+                       <label for="fcodigo">CODIGO:</label>
+                       <input type="text" id="fcodigo" v-model="productoPermanente[0].codigo" :value="data.codigo" />
+                       <label for="fnombre">NOMBRE:</label>
+                       <input  type="text" id="fnombre" v-model="productoPermanente[0].name" :value="data.name"/>
+                       <label for="fpre-base">PR.BASE:</label>
+                       <input type="text" id="fpre-base" v-model="productoPermanente[0].precioBase"  :value="data.precioBase" />
+                       <label for="fpre-venta">PR.VENTA:</label>
+                       <input  type="text" id="fpre-venta" v-model="productoPermanente[0].precioVenta" :value="data.precioVenta" /><br/>
+                       <label for="fstock">STOCK:</label>
+                       <input  type="text" id="fstock" v-model="productoPermanente[0].stock" :value="data.stock"/>
+                       </tr>
+                       <button @click="clearProductoPermanente(),codigoMaximo--" onclick="closeModal3()">cancelar</button>
                        <button @click="agregarProducto()" onclick="closeModal3()">agregar</button>
                     </div><!--fin div agregar producto--> 
                     <div v-show="ventanamodal=='verqr'">
