@@ -495,6 +495,65 @@
         }else{
           document.getElementById("luzBalance").style.background="green"
         }
+
+        //target cmponente vender
+        let tags=[]
+        let ulModify=document.getElementById("id1")
+        let inputModify=document.getElementById("id2")
+
+        function addLi(data){
+          //ulModify.querySelectorAll("li").forEach(li=>{li.remove()})
+          console.log("desde addLi ->",data)
+          //let li=document.createElement("li")
+          //li.textContent(data)
+          //`<li>${data} <i class="uit uit-multiply" onclick="remove(this, '${data}')"></i></li>`;
+          //let liTag="<li>xD</li>"
+          //ulModify.insertAdjacentHTML("beforeend","<li>xD</li>")
+          //tags.reverse().forEach(res=>{
+            ulModify.insertAdjacentHTML("afterbegin",`<li>${data} <i class="uit uit-multiply"></i></li>`)
+            inputModify.value=""
+            app.$children[0].getProductosBuscar(data);
+          //})
+          
+
+
+        }
+        function addTarget(e){
+          if(e.key=="Enter"){       
+            if( e.target.value.replace(/\s+/g, ' ').length > 0){
+              e.target.value.replace(/\s+/g, ' ').split(',').forEach(e=>{
+                 if(!tags.includes(e)){
+                  console.log("entrando a forEach")
+                  tags.push(e)
+                  addLi(e)
+                 }                
+              })
+            }
+          }
+        }
+        inputModify.addEventListener("keyup",addTarget);
+
+        ulModify.addEventListener("click", function(event) {
+          //console.log("evento completo->",event)  
+          //console.log("evento target->",event.target) 
+          //console.log("evento target tagName->",event.target.tagName)
+          //console.log("evento target nodeName->",event.target.nodeName)
+          //console.log("evento target parentNode->",event.target.parentNode)
+          
+                  if (event.target.tagName === "I") {
+                 console.log("ver data completo->",app.$children[0].productosDisponibles)
+                 let data=event.target.parentNode.textContent
+                 //console.log("ver el data -> ",data)
+                 let searchRegex = new RegExp(data, 'i');
+                 let objetosConCoincidencia = app.$children[0].productosDisponibles.filter(objeto => !searchRegex.test(objeto.name)); 
+                 console.log("coinsidencias ->",objetosConCoincidencia)           
+                 app.$children[0].productosDisponibles=objetosConCoincidencia;
+                 event.target.parentNode.remove(); 
+                 console.log(data)
+                 tags=tags.filter(e=> e!==data.trim())
+                 console.log(tags)
+                 }
+          });
        
         </script>
 </body>

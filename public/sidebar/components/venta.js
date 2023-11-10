@@ -4,17 +4,19 @@ Vue.component("ventas",{
             titulo1:"MENU DE VENTAS",
             productosDisponibles:[],
             productoVenta:[],
+            productoVentaGuadado:[],
             cantidad_pedido:0,
             TOTAL:0,
             TOTAL_GANANCIA:0,
             nombreCliente:'',
             apellidoCliente:'',
             dniCliente:'',
-            buscarProducto:''
+            categoriaModal:""
         }
     },
     mounted(){
       const self=this
+      
       /* store({productos(val){
             self.productosDisponibles=val
       }}) */
@@ -22,19 +24,18 @@ Vue.component("ventas",{
       //this.getProductos();
     },
     methods:{
-        async getProductosBuscar(event){  
+        async getProductosBuscar(data){  
           const self = this;   
-          console.log(self.buscarProducto)
-          console.log("1",event) 
+         // console.log(self.buscarProducto)
+          
           try{
-            let result=await axios.get(`http://localhost:8000/api/productos/?q=${self.buscarProducto}`);
-            console.log("2",event.value)
-            console.log("busqueda",result.data.productos)
+            let result=await axios.get(`http://localhost:8000/api/productos/?q=${data}`);
+            //console.log("2",event.value)
+            //console.log("busqueda",result.data.productos)
             result.data.productos.map(res=>{
               self.productosDisponibles.push(res)
               console.log(res)
              })
-             console.log(self.productosDisponibles)
               //store('productos',result)
           }catch(e){
             console.log(e)
@@ -67,6 +68,32 @@ Vue.component("ventas",{
           const ganancia= precio-precioBase;
           this.TOTAL-=precio;
           this.TOTAL_GANANCIA-=ganancia;
+        },
+        guardarVenta(){
+          console.log("producto guardado 1",this.productoVentaGuadado)
+          let person = prompt("DIGITE NOMBRE i/o DESCRIPCION DE CLIENTE", "->nombre");
+          this.productoVentaGuadado.push({...this.productoVenta,nameCliente:person,total:this.TOTAL})
+          console.log("producto guardado 2",this.productoVentaGuadado)
+          this.productoVenta=[]
+          this.TOTAL=0
+
+        },
+        terminarVenta(name,total){
+          console.log(name,total)
+          let i=0;
+          for(let data of this.productoVentaGuadado){
+            i++
+             if(data.nameCliente==name && data.total==total){
+              this.TOTAL=data.total
+              Object.keys(data).forEach(e=>{                
+                if(!isNaN(e)){
+                  console.log("key -> ",e,"-_- value->",data[e])
+                  this.productoVenta.push(data[e])
+                  this.productoVentaGuadado.splice(i-1,1)
+                }
+              })
+             }
+          } 
         },
         registroVenta(){
           const self = this;
@@ -154,8 +181,18 @@ Vue.component("ventas",{
     <div>
     <h1>{{titulo1}}</h1>
      <div><!--inicio div tabla1-->
-     <h1>{{buscarProducto}}</h1>
-     <input type="search" class="buscador" v-model="buscarProducto" @change="getProductosBuscar($event)"/>
+     <div class="wrapper">
+     <div class="title">
+     </div>
+     <div class="content">
+       <ul id="id1">
+       <input id="id2" type="text" spellcheck="false"></ul>
+     </div>
+     <div class="details">
+       <p><span id="id3">10</span> tags are remaining</p>
+       <button>Remove All</button>
+     </div>
+   </div><!--fin de wrapper-->
       <table>
         <tr>
           <th>PRODUCTO</th>
@@ -196,12 +233,15 @@ Vue.component("ventas",{
 
     <div>
        <div><!--inicio modal-->
-       <button onclick="openModal()" >hacer pedido</button>
+       <button onclick="openModal()" @click="categoriaModal='venta'">hacer pedido</button>
+       <button @click="guardarVenta()">guardar venta</button>
+       <button onclick="openModal()" @click="categoriaModal='ventaGuardada'">ventas guardadas</button>
 
        <!-- Ventana Modal -->
          <div id="myModal" class="modal">
           <div class="modal-content">
            <span class="close" onclick="closeModal()">&times;</span>
+           <div v-show="categoriaModal=='venta'">
            <h2>PEDIDOS:</h2>
            <div><!--inicio div tabla 2-->
                <table>
@@ -231,6 +271,20 @@ Vue.component("ventas",{
                 <button type="submit" class="btn btn-success" onclick="closeModal()"  @click="registroVenta()">registrar</button>
                 <button type="button" class="btn btn-danger" @click="productosDisponibles=[]" onclick="closeModal()" >cancelar</button>
               </div>
+              </div><!--fin div de venta-->
+              <div v-show="categoriaModal=='ventaGuardada'">
+                  <h1>VENTAS GUARDADAS</h1>
+                <table>
+                  <tr>
+                    <th>CLIENTE</th>
+                    <th></th>
+                  </tr>
+                  <tr v-for="data in productoVentaGuadado">
+                    <td>{{data.nameCliente}}</td>
+                    <button @click="terminarVenta(data.nameCliente,data.total)">terminar venta</button>
+                  </tr>
+                <table>
+              </div><!--fin div de ventaGuarda-->
           </div>          
 
              <!--xfinal modal-->
@@ -241,3 +295,5 @@ Vue.component("ventas",{
     </div>
     `
 })
+
+
