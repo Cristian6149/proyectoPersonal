@@ -56,7 +56,8 @@ Vue.component("ventas",{
                   })       
         },
         seleccionarProducto(produc){
-             this.productoVenta.push({...produc,cantidad:0,subtotal:0});
+          let veri=this.productoVenta.find(e=>e._id===produc._id)
+             if(veri===undefined) this.productoVenta.push({...produc,cantidad:0,subtotal:0});
 
         },
         sumar(precioVenta,precioBase){
@@ -96,11 +97,17 @@ Vue.component("ventas",{
           } 
         },
         registroVenta(){
+             // Obtener la fecha actual
+              const fechaActual = new Date();
+
+              // Crear una nueva instancia de Date con la misma fecha, pero sin la hora
+              const soloFecha = new Date(`${fechaActual.getUTCFullYear()}-${fechaActual.getUTCMonth()+1}-${fechaActual.getUTCDate()}`);
           const self = this;
           axios.post('http://localhost:8000/api/venta/cliente',{
             nombre:self.nombreCliente,
             apellido:self.apellidoCliente,
             dni:self.dniCliente,
+            fecha:soloFecha,
             total:self.TOTAL,
             totalganancia:self.TOTAL_GANANCIA
           }).then(res=>{
@@ -111,10 +118,14 @@ Vue.component("ventas",{
               nombre:self.nombreCliente,
               apellido:self.apellidoCliente,
               dni:self.dniCliente,
+              fecha:soloFecha,
               total:self.TOTAL,
               totalganancia:self.TOTAL_GANANCIA})
+              self.nombreCliente=''
+              self.apellidoCliente=''
+              self.dniCliente=''
           }).catch(e=>{
-            console.log("error")
+            console.log(e)
           })
         },
         async nuevoDetalle(idVenta){
@@ -242,39 +253,39 @@ Vue.component("ventas",{
           <div class="modal-content">
            <span class="close" onclick="closeModal()">&times;</span>
            <div v-show="categoriaModal=='venta'">
-           <h2>PEDIDOS:</h2>
-           <div><!--inicio div tabla 2-->
+            <h2>PEDIDOS:</h2>
+            <div><!--inicio div tabla 2-->
                <table>
                   <tr>
                     <th>DESCRIPCION</th>
-                     <th>CANT</th>
-                      <th>SUBTOTAL</th>
-                      </tr>
-                       <tr v-for="data in productoVenta">
-                       <td>{{data.name}}</td>
-                       <td>{{data.precioVenta}}</td>
-                       <td>{{data.cantidad}}</td>
-                       <td>{{data.subtotal}}</td>
-                     </tr>
+                    <th>CANT</th>
+                    <th>SUBTOTAL</th>
+                  </tr>
+                  <tr v-for="data in productoVenta">
+                    <td>{{data.name}}</td>
+                    <td>{{data.precioVenta}}</td>
+                    <td>{{data.cantidad}}</td>
+                    <td>{{data.subtotal}}</td>
+                  </tr>
                      <h2>TOTAL :S/.{{TOTAL}}</h2>
-                  </table>
+                 </table>
                 </div><!--fin div tabla 2-->
               
-              <div><!--data usuario-->
+            <div><!--data usuario-->
               <h3>Ingrese datos:{{dniCliente}}</h3>
               <input type="number" placeholder="dni cliente" v-model='dniCliente'/>
               <input type="text" placeholder="nombre cliente" v-model='nombreCliente'/>
               <input type="text" placeholder="opcional: apellido cliente" v-model='apellidoCliente'/>              
            </div><!--data usuario-->
-              <div class="content-button">
+            <div class="content-button">
               <button @click="getDataCliente()">buscar</button>
                 <button type="submit" class="btn btn-success" onclick="closeModal()"  @click="registroVenta()">registrar</button>
                 <button type="button" class="btn btn-danger" @click="productosDisponibles=[]" onclick="closeModal()" >cancelar</button>
-              </div>
-              </div><!--fin div de venta-->
-              <div v-show="categoriaModal=='ventaGuardada'">
-                  <h1>VENTAS GUARDADAS</h1>
-                <table>
+            </div>
+          </div><!--fin div de venta-->
+            <div v-show="categoriaModal=='ventaGuardada'">
+                <h1>VENTAS GUARDADAS</h1>
+              <table>
                   <tr>
                     <th>CLIENTE</th>
                     <th></th>
@@ -283,7 +294,7 @@ Vue.component("ventas",{
                     <td>{{data.nameCliente}}</td>
                     <button @click="terminarVenta(data.nameCliente,data.total)">terminar venta</button>
                   </tr>
-                <table>
+                </table>
               </div><!--fin div de ventaGuarda-->
           </div>          
 

@@ -155,7 +155,7 @@ const getters = app =>{
             console.log(findS)
             console.log(findS2)
         try{
-            const getVenta = await modelVenta.find(findS ? {fecha:{$gte:findS,$lte:findS2}}:undefined);
+            const getVenta = await modelVenta.find(findS ? (findS2?{fecha:{$gte:findS,$lte:findS2}}:{fecha:{$eq:findS}}):undefined);
              console.log(getVenta)
             res.status(200).json(getVenta)
         }catch(e){

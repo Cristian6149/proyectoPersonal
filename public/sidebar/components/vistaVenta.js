@@ -32,20 +32,21 @@ Vue.component("vista_ventas", {
   methods: {
     async getVentasBuscar(event){  
       const self = this;   
-      console.log(self.buscarVenta)
-      console.log("evento xd",event) 
+       console.log("evento keyup xd ->",event)
+      this.VENTAS_TOTALES =0;
+      this.GANANCIA_TOTAL = 0;
+      console.log("1->",self.buscarVenta)
+      console.log("2->",self.buscarVenta2)
       try{
         let result=await axios.get(`http://localhost:8000/api/venta/?q=${self.buscarVenta}&q2=${self.buscarVenta2}`);
-        console.log(result.data)
-        result.data.map(res=>{
-          console.log("map",res)
-        })
         store("VENTASREALIZADAS",result.data.map(res=> {
           this.VENTAS_TOTALES += res.total;
           this.GANANCIA_TOTAL += res.totalganancia;
           return res;
         })
       );
+      self.buscarVenta=''
+      self.buscarVenta2=''
           //store('productos',result)
       }catch(e){
         console.log("error xd cath",e)
@@ -72,11 +73,6 @@ Vue.component("vista_ventas", {
       self.detalleSeleccionado = result.data.map((e) => {
         return e;
       });
-    },
-    cambiar(){
-      store('VENTASREALIZADAS@set' , {
-        nombre:"gkgkgkgk"
-      } , item => (item.nombre == 'ggggggg'))
     }
   },
   template:  //html
@@ -85,8 +81,10 @@ Vue.component("vista_ventas", {
     
     <h1>{{buscarVenta}}</h1>
     <h1>{{buscarVenta2}}</h1>
-    <input type="date"  v-model="buscarVenta" @change="getVentasBuscar($event)"/>
-    <input type="date"  v-model="buscarVenta2" @change="getVentasBuscar($event)"/>
+    <div v-on:keydown="getVentasBuscar($event)">
+    <input type="date"  v-model="buscarVenta" />
+    <input type="date"  v-model="buscarVenta2"/>
+    </div
      <table border="2">
      <tr >
          <th>CLIENTE</th>
@@ -101,10 +99,13 @@ Vue.component("vista_ventas", {
          <td>{{data.totalganancia}}</td>
          <button onclick="openModal2()" @click="getDetalles(data._id)">ver detalle</button>
       </tr>
+      <tr>
+        <td></td>
+        <td>VENTAS TOTALES : {{VENTAS_TOTALES}}</td>
+        <td>GANANCIA DEL DIA : {{GANANCIA_TOTAL}}</td>
+      </tr>
      </table>
-     <h1>VENTAS TOTALES : {{VENTAS_TOTALES}}</h1>
-     <h1>GANANCIA DEL DIA : {{GANANCIA_TOTAL}}</h1>
-     <button @click="cambiar()">actualizar</button>
+     <button >imprimir reporte</button>
     <!--xinicio modal-->
      
    <!-- Ventana Modal -->

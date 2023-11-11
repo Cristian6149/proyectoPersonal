@@ -93,7 +93,7 @@ const venta = new mongoose.Schema({
     },
     fecha:{
       type:Date,
-      default:new Date('2023-11-06')
+      default:new Date()
     },
     total:{
         type:Number,
