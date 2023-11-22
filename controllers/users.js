@@ -5,7 +5,6 @@ const isAuthenticated = require('../middleware/auth');
 const moment= require('moment')
 dotenv.config({path:'../config/config.env'})
 const { modelUsuarios,modelProducto,modelVenta,modelDetalle } = require('../models/modelUsers.js')
-
 setters = app =>{
     app.post('/register', async(req,res)=>{
       try {
@@ -108,7 +107,7 @@ const getters = app =>{
             console.log(findS)
             /*-------------------------- */
             
-           const productos = await modelProducto.find(findS ? { name:{$regex: findS,$options:'i'} }:undefined).sort({codigo:-1}).limit(5);
+           const productos = await modelProducto.find(findS ? { name:{$regex: findS,$options:'i'} }:undefined).sort({codigo:-1})/*.limit(5)*/;
             console.log("pruebas",productos) 
             if (!productos) {
                 return res.json({ message: 'No product found' })

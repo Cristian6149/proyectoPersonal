@@ -1,4 +1,4 @@
-const {modelSaldo,modelPrestamoCortoPlazo,modelPRestamoLargoPlazo,modelCapitalSocial } = require('../models/modelCuentas');
+const {modelSaldo,modelPrestamoCortoPlazo,modelPRestamoLargoPlazo,modelCapitalSocial } = require('../models/modelCaja');
 
 const setterCuenta= app =>{
 

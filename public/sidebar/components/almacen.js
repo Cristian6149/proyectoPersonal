@@ -15,6 +15,7 @@ Vue.component("almacen", {
       sumaTotalStock: 0,
       codigoMaximo:0,
       contador:0,
+      getProductoBuscar:""
     };
   },
   mounted() {
@@ -32,9 +33,9 @@ Vue.component("almacen", {
     }
   },
   methods: { 
-   async getProductos() {
+   async getProductos(event) {
       this.sumaTotalStock = 0;
-      const result = await axios.get(`http://localhost:8000/api/productos`);
+      const result = await axios.get(`http://localhost:8000/api/productos/?q=${this.getProductoBuscar}`);
       store(
         "productos",
         result.data.productos.map((res) => {
@@ -159,15 +160,23 @@ Vue.component("almacen", {
    `
        <div>
         <h1 class="alamacen-estatico">{{title}}</h1>
-         <table>
-         <tr>
+        <div v-on:keydown="getProductos($event)">
+           <h3 class="has-text-weight-bold">BUSCAR:</h3>
+           <input placeholder="digite producto a buscar" type="text" v-model="getProductoBuscar"/>
+        </div>
+        <div class="chat-container">
+         <table class="tableModal">
+         <tr class="chat-container-header">
            <th>CODIGO</th>
            <th>PRODUCTO</th>
            <th>P.COMPRA</th>
            <th>P.VENTA</th>
-           <th>STOCK</th>
+           <th >STOCK</th>
+           <th>-</th>
+            <th>-</th>
          </tr>
-           <tr v-for="data in listaProductos">
+          
+           <tr  v-for="data in listaProductos">
               <td>{{data.codigo}}</td>
               <td>{{data.name}}</td>
               <td>{{data.precioBase}}</td>
@@ -202,7 +211,9 @@ Vue.component("almacen", {
                     </div></td><!--fin contenedor-->
               <!--</div>FIN ICONOS -->
            </tr>
+        
          </table>
+         </div>
          <ion-icon name="add-sharp"></ion-icon>
          <button @click="ventanamodal='agregarProducto'" onclick="openModal3()">agregar productos</button>
          

@@ -39,6 +39,7 @@ Vue.component("vista_ventas", {
       console.log("2->",self.buscarVenta2)
       try{
         let result=await axios.get(`http://localhost:8000/api/venta/?q=${self.buscarVenta}&q2=${self.buscarVenta2}`);
+        console.log("el result de frontend -> ",result)
         store("VENTASREALIZADAS",result.data.map(res=> {
           this.VENTAS_TOTALES += res.total;
           this.GANANCIA_TOTAL += res.totalganancia;
@@ -115,13 +116,13 @@ Vue.component("vista_ventas", {
   <h2>DETALLES:</h2>
   <table border="2">
   <tr>
-     <th>ID DE PRODUCTO</th>
+     <th>PRODUCTO</th>
      <th>CANTIDAD</th>
      <th>SUBTOTAL</th>
      <th>GANANCIA</th> 
   </tr> 
   <tr v-for="data in detalleSeleccionado">
-      <td>{{data.idProducto}}</td>
+      <td>{{data.name}}</td>
       <td>{{data.cantidad}}</td>
       <td>{{data.subtotal}}</td>
       <td>{{data.subtotalGanancia}}</td>

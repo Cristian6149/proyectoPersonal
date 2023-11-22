@@ -1,9 +1,9 @@
 const mongoose=require('mongoose')
-const fechaActual = new Date();
+ // Obtener la fecha actual
+ const fechaActual = new Date();
 
-const dia = String(fechaActual.getDate()).padStart(2, '0');
-const mes = String(fechaActual.getMonth() + 1).padStart(2, '0'); // Los meses empiezan en 0, así que se suma 1
-const anio = fechaActual.getFullYear(); 
+ // Crear una nueva instancia de Date con la misma fecha, pero sin la hora
+ const soloFecha = new Date(`${fechaActual.getUTCFullYear()}-${fechaActual.getUTCMonth()+1}-${fechaActual.getUTCDate()}`);
 const usuarios=new mongoose.Schema({
     name: {
         type:String,
@@ -93,7 +93,7 @@ const venta = new mongoose.Schema({
     },
     fecha:{
       type:Date,
-      default:new Date()
+      default:soloFecha
     },
     total:{
         type:Number,

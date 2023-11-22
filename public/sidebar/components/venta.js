@@ -200,10 +200,10 @@ Vue.component("ventas",{
        <input id="id2" type="text" spellcheck="false"></ul>
      </div>
      <div class="details">
-       <p><span id="id3">10</span> tags are remaining</p>
-       <button>Remove All</button>
+       <button id="botonRemove">Remove All</button>
      </div>
    </div><!--fin de wrapper-->
+   <div class="chat-container">
       <table>
         <tr>
           <th>PRODUCTO</th>
@@ -220,14 +220,16 @@ Vue.component("ventas",{
      </table>
     </div><!--fin div tabla 1-->
     <div><!--inicio div tabla 2-->
-    <h1>REGISTRO COMPRA</h1>
+    <h1 >REGISTRO COMPRA</h1>
+    <div class="chat-container">
       <table>        
           <tr>
             <th>DESCRIPCION</th>
             <th>PRECIO PRODUCTO</th>
             <th>SUBTOTAL</th>
             <th colspan="3">CANTIDAD</th>
-            <th></th>
+            <th>-</th>
+            <th>-</th>
           </tr>
           <tr v-for="data in productoVenta">
             <td>{{data.name}}</td>
@@ -240,6 +242,8 @@ Vue.component("ventas",{
           </tr>
           <h2>TOTAL :S/.{{TOTAL}}</h2>
       </table>
+      </div>
+      </div><<!--fin chat-container-->
     </div><!--fin div tabla 2-->
 
     <div>
@@ -254,10 +258,11 @@ Vue.component("ventas",{
            <span class="close" onclick="closeModal()">&times;</span>
            <div v-show="categoriaModal=='venta'">
             <h2>PEDIDOS:</h2>
-            <div><!--inicio div tabla 2-->
-               <table>
+            <div  class="chat-container"><!--inicio div tabla 2-->
+               <table class="tableModal">
                   <tr>
                     <th>DESCRIPCION</th>
+                    <th>P/U</th>
                     <th>CANT</th>
                     <th>SUBTOTAL</th>
                   </tr>
@@ -275,7 +280,11 @@ Vue.component("ventas",{
               <h3>Ingrese datos:{{dniCliente}}</h3>
               <input type="number" placeholder="dni cliente" v-model='dniCliente'/>
               <input type="text" placeholder="nombre cliente" v-model='nombreCliente'/>
-              <input type="text" placeholder="opcional: apellido cliente" v-model='apellidoCliente'/>              
+              <input type="text" placeholder="opcional: apellido cliente" v-model='apellidoCliente'/>  
+              <h3>metodo de pago:</h3>
+               <h3>efectivo</h3>
+               <h3>bcp</h3>
+               <h3>interbanck</h3>
            </div><!--data usuario-->
             <div class="content-button">
               <button @click="getDataCliente()">buscar</button>

@@ -19,7 +19,7 @@
         <div class="background"></div>
         <div class="container">
             <div class="item">
-                <h2 class="logo"><i class='bx bxs-building'></i>NEVER STORE</h2>
+                <h2 class="logo"><i class='bx bxs-building'></i>{{never}}</h2>
                 <div class="text-item">
                     <h2><span>
                         TE LO DEJAMOS INSTALADO !!
@@ -62,6 +62,7 @@
     const app = new Vue({
         el:"#app",
         data:{
+            never:"NEVER STOREn",
             title:'LOGIN',
             email:'',
             password:''

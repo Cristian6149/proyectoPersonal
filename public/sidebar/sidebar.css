@@ -487,3 +487,30 @@ table {
   }
 
   /*fin de input tag venta*/
+
+  /*cotenido-tabla-caja*/
+
+  .cotenido-tabla-caja table {
+    width: 10%;
+    padding-right: 50px;
+   }
+   
+   .cotenido-tabla-caja .intebank {
+    background-color: #4CAF50;
+    color: white;
+   }
+   .cotenido-tabla-caja .bcp {
+    background-color: #105ccd;
+    color: white;
+   }
+
+   .cotenido-tabla-caja .efectivo {
+    background-color: #bacf46;
+    color: white;
+   }
+
+
+   /*COMPONENTE MOVIMIENTOS*/
+   .contenButtonMovimiento button:hover{
+     background: red;
+   }
